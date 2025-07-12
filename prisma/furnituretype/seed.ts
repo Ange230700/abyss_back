@@ -1,5 +1,6 @@
 // prisma/furnituretype/seed.ts
 
+import { faker } from '@faker-js/faker';
 import prisma from '~/prisma/lib/client';
 import cleanUp from '~/prisma/helpers/cleanUp';
 
@@ -23,8 +24,14 @@ async function seedFurnitureType() {
     console.log('⚠️ Skipping cleanup (SKIP_CLEANUP=true)');
   }
 
+  const COUNT = types.length;
+
+  const fakeFurnitureTypesList = Array.from({ length: COUNT }).map(() => ({
+    name: faker.helpers.arrayElement(types).name,
+  }));
+
   await prisma.furnituretype.createMany({
-    data: types,
+    data: fakeFurnitureTypesList,
     skipDuplicates: true,
   });
   console.log(`🎉 Seeded ${types.length} records in furnituretype.`);

@@ -6,6 +6,7 @@
     "furnituretype",
     "mysql",
     "nestjs",
+    "Picsum",
     "prisma"
   ]
 }
