@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { FurnitureService } from './furniture.service';
-import { FurnitureController } from './furniture.controller';
+import { FurnitureService } from '~/src/furniture/furniture.service';
+import { FurnitureController } from '~/src/furniture/furniture.controller';
 
 @Module({
   providers: [FurnitureService],

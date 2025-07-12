@@ -9,9 +9,9 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { FurnitureService } from './furniture.service';
-import { CreateFurnitureDto } from './dto/create-furniture.dto';
-import { UpdateFurnitureDto } from './dto/update-furniture.dto';
+import { FurnitureService } from '~/src/furniture/furniture.service';
+import { CreateFurnitureDto } from '~/src/furniture/dto/create-furniture.dto';
+import { UpdateFurnitureDto } from '~/src/furniture/dto/update-furniture.dto';
 
 @Controller('furniture')
 export class FurnitureController {
