@@ -10,6 +10,7 @@ import { FavoriteModule } from '~/src/favorite/favorite.module';
 import { FurnituretypeModule } from '~/src/furnituretype/furnituretype.module';
 import { FurniturematerialModule } from '~/src/furniturematerial/furniturematerial.module';
 import { MaterialModule } from '~/src/material/material.module';
+import { ImageModule } from '~/src/image/image.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MaterialModule } from '~/src/material/material.module';
     FurnituretypeModule,
     FurniturematerialModule,
     MaterialModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
