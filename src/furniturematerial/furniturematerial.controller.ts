@@ -9,10 +9,12 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FurniturematerialService } from '~/src/furniturematerial/furniturematerial.service';
 import { CreateFurniturematerialDto } from '~/src/furniturematerial/dto/create-furniturematerial.dto';
 import { UpdateFurniturematerialDto } from '~/src/furniturematerial/dto/update-furniturematerial.dto';
 
+@ApiTags('furniture-materials')
 @Controller('furniture-materials')
 export class FurniturematerialController {
   constructor(
@@ -20,21 +22,29 @@ export class FurniturematerialController {
   ) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create furniture-material link' })
+  @ApiResponse({ status: 201, description: 'Furniture-material link created' })
   create(@Body() createFurniturematerialDto: CreateFurniturematerialDto) {
     return this.furniturematerialService.create(createFurniturematerialDto);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all furniture-material links' })
+  @ApiResponse({ status: 200, description: 'List of furniture-material links' })
   findAll() {
     return this.furniturematerialService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get furniture-material by ID' })
+  @ApiResponse({ status: 200, description: 'Furniture-material found' })
   findOne(@Param('id') id: string) {
     return this.furniturematerialService.findOne(+id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update furniture-material by ID' })
+  @ApiResponse({ status: 200, description: 'Furniture-material updated' })
   update(
     @Param('id') id: string,
     @Body() updateFurniturematerialDto: UpdateFurniturematerialDto,
@@ -46,6 +56,8 @@ export class FurniturematerialController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Soft delete furniture-material by ID' })
+  @ApiResponse({ status: 200, description: 'Furniture-material soft deleted' })
   remove(@Param('id') id: string) {
     return this.furniturematerialService.remove(+id);
   }
