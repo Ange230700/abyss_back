@@ -7,9 +7,16 @@ import { PrismaModule } from '~/src/prisma/prisma.module';
 import { UserModule } from '~/src/user/user.module';
 import { FurnitureModule } from '~/src/furniture/furniture.module';
 import { FavoriteModule } from '~/src/favorite/favorite.module';
+import { FurnituretypeModule } from '~/src/furnituretype/furnituretype.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, FurnitureModule, FavoriteModule],
+  imports: [
+    PrismaModule,
+    UserModule,
+    FurnitureModule,
+    FavoriteModule,
+    FurnituretypeModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
