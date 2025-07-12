@@ -1,0 +1,100 @@
+// prisma\schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================
+// Prisma Schema
+// =====================
+
+model user {
+  id        Int       @id @default(autoincrement())
+  user_name String
+  email     String
+  password  String
+  role      role
+
+  favorites favorite[]
+}
+
+model favorite {
+  id           Int      @id @default(autoincrement())
+  id_furniture Int
+  id_user      Int
+  is_favorite  Boolean
+
+  // Relations
+  furniture furniture @relation(fields: [id_furniture], references: [id], onDelete: Cascade)
+  user      user      @relation(fields: [id_user], references: [id], onDelete: Cascade)
+}
+
+model furniture {
+  id           Int            @id @default(autoincrement())
+  name         String
+  description  String
+  id_type      Int
+  size         String
+  colour       String
+  quantity     Int
+  price        Float
+  status       status
+
+  // Relations
+  type        furnituretype    @relation(fields: [id_type], references: [id], onDelete: Cascade)
+  favorites   favorite[]
+  images      image[]
+  materials   furniturematerial[]
+}
+
+model furnituretype {
+  id        Int        @id @default(autoincrement())
+  name      String
+
+  furniture furniture[]
+}
+
+model furniturematerial {
+  id            Int       @id @default(autoincrement())
+  id_furniture  Int
+  id_material   Int
+
+  // Relations
+  furniture     furniture @relation(fields: [id_furniture], references: [id], onDelete: Cascade)
+  material      material  @relation(fields: [id_material], references: [id], onDelete: Cascade)
+}
+
+model material {
+  id               Int                @id @default(autoincrement())
+  name             String
+
+  furnitureMaterials furniturematerial[]
+}
+
+model image {
+  id            Int       @id @default(autoincrement())
+  id_furniture  Int
+  url           String
+
+  furniture     furniture @relation(fields: [id_furniture], references: [id], onDelete: Cascade)
+}
+
+// ==============
+// Enums
+// ==============
+enum role {
+  admin
+  visitor
+  customer
+  seller
+}
+
+enum status {
+  Available
+  Out_of_stock
+}

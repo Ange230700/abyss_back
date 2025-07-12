@@ -1,3 +1,11 @@
 {
-  "cSpell.words": ["favorited"]
+  "cSpell.words": [
+    "datasource",
+    "favorited",
+    "furniturematerial",
+    "furnituretype",
+    "mysql",
+    "nestjs",
+    "prisma"
+  ]
 }
