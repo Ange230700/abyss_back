@@ -8,6 +8,7 @@ import { UserModule } from '~/src/user/user.module';
 import { FurnitureModule } from '~/src/furniture/furniture.module';
 import { FavoriteModule } from '~/src/favorite/favorite.module';
 import { FurnituretypeModule } from '~/src/furnituretype/furnituretype.module';
+import { FurniturematerialModule } from '~/src/furniturematerial/furniturematerial.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { FurnituretypeModule } from '~/src/furnituretype/furnituretype.module';
     FurnitureModule,
     FavoriteModule,
     FurnituretypeModule,
+    FurniturematerialModule,
   ],
   controllers: [AppController],
   providers: [AppService],
