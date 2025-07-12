@@ -2,19 +2,8 @@
 
 import prisma from '~/prisma/lib/client';
 import { faker } from '@faker-js/faker';
-import cleanUp from '~/prisma/helpers/cleanUp';
 
 async function seedFavorite() {
-  const skipCleanup = process.env.SKIP_CLEANUP === 'true';
-
-  if (!skipCleanup) {
-    console.log('🧹 Cleaning up…');
-    await cleanUp();
-    console.log('🧹 Cleaning up complete.');
-  } else {
-    console.log('⚠️ Skipping cleanup (SKIP_CLEANUP=true)');
-  }
-
   const users = await prisma.user.findMany({ select: { id: true } });
   const furnitures = await prisma.furniture.findMany({ select: { id: true } });
 

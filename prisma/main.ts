@@ -1,6 +1,7 @@
 // prisma\main.ts
 
 import prisma from '~/prisma/lib/client';
+import cleanUp from '~/prisma/helpers/cleanUp';
 import seedFurnitureType from '~/prisma/furnituretype/seed';
 import seedMaterial from '~/prisma/material/seed';
 import seedUser from '~/prisma/user/seed';
@@ -11,6 +12,12 @@ import seedFavorite from '~/prisma/favorite/seed';
 
 async function main() {
   console.log('🌱 Seeding...');
+
+  const skipCleanup = process.env.SKIP_CLEANUP === 'true';
+  if (!skipCleanup) {
+    await cleanUp();
+  }
+
   await seedFurnitureType();
   await seedMaterial();
   await seedUser();

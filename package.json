@@ -65,7 +65,7 @@
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.18.0",
-    "eslint-config-prettier": "^10.0.1",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-import-resolver-typescript": "^4.4.3",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.2",
@@ -109,6 +109,7 @@
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown",
+    "prisma/schema.prisma": "npm run prisma:format",
     "*.{js, ts, mjs, mts, cjs, cts}": "eslint --cache --fix"
   },
   "validate-branch-name": {

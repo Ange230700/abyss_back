@@ -2,7 +2,6 @@
 
 import { faker } from '@faker-js/faker';
 import prisma from '~/prisma/lib/client';
-import cleanUp from '~/prisma/helpers/cleanUp';
 
 const types = [
   { name: 'Chair' },
@@ -14,16 +13,6 @@ const types = [
 ];
 
 async function seedFurnitureType() {
-  const skipCleanup = process.env.SKIP_CLEANUP === 'true';
-
-  if (!skipCleanup) {
-    console.log('🧹 Cleaning up…');
-    await cleanUp();
-    console.log('🧹 Cleaning up complete.');
-  } else {
-    console.log('⚠️ Skipping cleanup (SKIP_CLEANUP=true)');
-  }
-
   const COUNT = types.length;
 
   const fakeFurnitureTypesList = Array.from({ length: COUNT }).map(() => ({
