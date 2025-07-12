@@ -1,0 +1,47 @@
+%% src\user\user.diagram.mmd
+
+classDiagram
+    %% DTOs
+    class CreateUserDto {
+        +user_name: string
+        +email: string
+        +password: string
+        +role: role
+    }
+    class UpdateUserDto
+    UpdateUserDto --|> CreateUserDto : extends (PartialType)
+
+    %% Service
+    class UserService {
+        +constructor(prisma: PrismaService)
+        +create(data: CreateUserDto): Promise<User>
+        +findAll(): Promise<User[]>
+        +findOne(id: number): Promise<User>
+        +update(id: number, data: UpdateUserDto): Promise<User>
+        +remove(id: number): Promise<User>
+    }
+
+    %% Controller
+    class UserController {
+        +constructor(userService: UserService)
+        +create(createUserDto: CreateUserDto): Promise<User>
+        +findAll(): Promise<User[]>
+        +findOne(id: string): Promise<User>
+        +update(id: string, updateUserDto: UpdateUserDto): Promise<User>
+        +remove(id: string): Promise<User>
+    }
+
+    %% Module
+    class UserModule {
+        <<Module>>
+    }
+
+    %% Relationships
+    UserController --> UserService : depends on
+    UserController ..> CreateUserDto : uses
+    UserController ..> UpdateUserDto : uses
+    UserService ..> CreateUserDto : uses
+    UserService ..> UpdateUserDto : uses
+    UserModule o-- UserController : provides
+    UserModule o-- UserService : provides
+
