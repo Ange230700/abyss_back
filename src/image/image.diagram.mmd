@@ -1,0 +1,46 @@
+%% src\image\image.diagram.mmd
+
+classDiagram
+    %% DTOs
+    class CreateImageDto {
+        +id_furniture: number
+        +url: string
+        +deleted_at?: Date
+    }
+    class UpdateImageDto
+    UpdateImageDto --|> CreateImageDto : extends (PartialType)
+
+    %% Service
+    class ImageService {
+        +constructor(prisma: PrismaService)
+        +create(data: CreateImageDto): Promise<Image>
+        +findAll(): Promise<Image[]>
+        +findOne(id: number): Promise<Image>
+        +update(id: number, data: UpdateImageDto): Promise<Image>
+        +remove(id: number): Promise<Image>
+    }
+
+    %% Controller
+    class ImageController {
+        +constructor(imageService: ImageService)
+        +create(createImageDto: CreateImageDto): Promise<Image>
+        +findAll(): Promise<Image[]>
+        +findOne(id: string): Promise<Image>
+        +update(id: string, updateImageDto: UpdateImageDto): Promise<Image>
+        +remove(id: string): Promise<Image>
+    }
+
+    %% Module
+    class ImageModule {
+        <<Module>>
+    }
+
+    %% Relationships
+    ImageController --> ImageService : depends on
+    ImageController ..> CreateImageDto : uses
+    ImageController ..> UpdateImageDto : uses
+    ImageService ..> CreateImageDto : uses
+    ImageService ..> UpdateImageDto : uses
+    ImageModule o-- ImageController : provides
+    ImageModule o-- ImageService : provides
+
