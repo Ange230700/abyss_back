@@ -1,11 +1,13 @@
 // prisma\main.ts
 
 import prisma from '~/prisma/lib/client';
-// TODO: import table seeding module
+import seedFurnitureType from '~/prisma/furnituretype/seed';
+import seedFurniture from '~/prisma/furniture/seed';
 
 async function main() {
   console.log('🌱 Seeding...');
-  // TODO: seed data
+  await seedFurnitureType();
+  await seedFurniture();
   console.log('🌱 Seeding complete.');
 }
 
