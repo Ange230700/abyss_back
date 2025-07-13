@@ -1,7 +1,7 @@
 // src/favorite/favorite.service.spec.ts
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { FavoriteService } from './favorite.service';
+import { FavoriteService } from '~/src/favorite/favorite.service';
 import { PrismaService } from '~/src/prisma/prisma.service';
 
 const prismaMock = {

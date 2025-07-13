@@ -1,8 +1,8 @@
 // src/favorite/favorite.controller.spec.ts
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { FavoriteController } from './favorite.controller';
-import { FavoriteService } from './favorite.service';
+import { FavoriteController } from '~/src/favorite/favorite.controller';
+import { FavoriteService } from '~/src/favorite/favorite.service';
 
 const serviceMock = {
   create: jest.fn(),
