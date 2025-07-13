@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserService } from '~/src/user/user.service';
@@ -36,8 +37,11 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiResponse({ status: 200, description: 'The found user' })
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return this.userService.findOne(+id).then((user) => {
+      if (!user) throw new NotFoundException('User not found');
+      return user;
+    });
   }
 
   @Patch(':id')
