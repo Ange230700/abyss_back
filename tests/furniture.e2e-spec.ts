@@ -4,19 +4,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '~/src/app.module';
+import { faker } from '@faker-js/faker';
+import { status } from '@prisma/client';
 
 // Dummy values for dependencies (id_type must reference an existing furnituretype!)
 const FURNITURE_TYPE_ID = 1;
 
 const baseFurniture = {
-  name: 'Test Chair',
-  description: 'A comfy test chair',
-  id_type: FURNITURE_TYPE_ID,
-  size: 'Medium',
-  colour: 'Blue',
-  quantity: 5,
-  price: 99.99,
-  status: 'Available',
+  name: faker.commerce.productName(), // e.g. "Ergonomic Wooden Table"
+  description: faker.commerce.productDescription(), // e.g. "A high-quality wooden table..."
+  id_type: 1, // reference to an existing furnituretype
+  size: faker.helpers.arrayElement(['Small', 'Medium', 'Large']),
+  colour: faker.color.human(), // e.g. "Blue"
+  quantity: faker.number.int({ min: 1, max: 100 }),
+  price: parseFloat(faker.commerce.price({ min: 50, max: 500, dec: 2 })),
+  status: status.Available,
+  deleted_at: null,
 };
 
 describe('FurnitureController (e2e)', () => {
