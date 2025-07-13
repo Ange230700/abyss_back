@@ -4,6 +4,7 @@
     "favorited",
     "furniturematerial",
     "furnituretype",
+    "furnituretypes",
     "mysql",
     "nestjs",
     "Picsum",
