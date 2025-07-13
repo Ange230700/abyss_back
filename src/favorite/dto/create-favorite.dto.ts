@@ -1,23 +1,33 @@
 // src\favorite\dto\create-favorite.dto.ts
 
+import { faker } from '@faker-js/faker';
 import { IsInt, IsBoolean, IsOptional } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateFavoriteDto {
-  @ApiProperty({ example: 1, description: 'Furniture ID' })
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'Furniture ID',
+  })
   @IsInt()
   id_furniture: number;
 
-  @ApiProperty({ example: 2, description: 'User ID' })
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'User ID',
+  })
   @IsInt()
   id_user: number;
 
-  @ApiProperty({ example: true, description: 'Is favorite?' })
+  @ApiProperty({
+    example: faker.datatype.boolean(),
+    description: 'Is favorite?',
+  })
   @IsBoolean()
   is_favorite: boolean;
 
   @ApiPropertyOptional({
-    example: '2024-07-10T13:00:00Z',
+    example: faker.date.recent().toISOString(),
     description: 'Deletion timestamp',
   })
   @IsOptional()
