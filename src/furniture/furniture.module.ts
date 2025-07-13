@@ -1,3 +1,5 @@
+// src\furniture\furniture.module.ts
+
 import { Module } from '@nestjs/common';
 import { FurnitureService } from '~/src/furniture/furniture.service';
 import { FurnitureController } from '~/src/furniture/furniture.controller';
