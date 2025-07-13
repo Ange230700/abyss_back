@@ -3,17 +3,24 @@
 import { IsString, IsEmail, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { role } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'john_doe', description: 'User name' })
+  @ApiProperty({ example: faker.internet.username(), description: 'User name' })
   @IsString()
   user_name: string;
 
-  @ApiProperty({ example: 'john@example.com', description: 'Email address' })
+  @ApiProperty({
+    example: faker.internet.email(),
+    description: 'Email address',
+  })
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'password123', description: 'User password' })
+  @ApiProperty({
+    example: faker.internet.password({ length: 12 }),
+    description: 'User password',
+  })
   @IsString()
   password: string;
 
