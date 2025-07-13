@@ -14,8 +14,8 @@ import { FurnitureService } from '~/src/furniture/furniture.service';
 import { CreateFurnitureDto } from '~/src/furniture/dto/create-furniture.dto';
 import { UpdateFurnitureDto } from '~/src/furniture/dto/update-furniture.dto';
 
-@ApiTags('furniture')
-@Controller('furniture')
+@ApiTags('furnitures')
+@Controller('furnitures')
 export class FurnitureController {
   constructor(private readonly furnitureService: FurnitureService) {}
 
