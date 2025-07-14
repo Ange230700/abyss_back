@@ -1,14 +1,21 @@
-// src\material\dto\create-material.dto.ts
+// src/material/dto/create-material.dto.ts
 
+import { faker } from '@faker-js/faker';
 import { IsString, IsOptional } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateMaterialDto {
-  @ApiProperty({ example: 'Wood', description: 'Material name' })
+  @ApiProperty({
+    example: faker.commerce.productMaterial(),
+    description: 'Material name',
+  })
   @IsString()
   name: string;
 
-  @ApiPropertyOptional({ example: '2024-07-10T13:00:00Z' })
+  @ApiPropertyOptional({
+    example: faker.date.recent().toISOString(),
+    description: 'Optional deletion timestamp',
+  })
   @IsOptional()
   deleted_at?: Date;
 }

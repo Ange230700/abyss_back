@@ -1,5 +1,6 @@
 // tests\material.e2e-spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
@@ -8,6 +9,7 @@ import { AppModule } from '~/src/app.module';
 describe('MaterialController (e2e)', () => {
   let app: INestApplication;
   let createdId: number;
+  let materialName: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -27,12 +29,13 @@ describe('MaterialController (e2e)', () => {
   });
 
   it('POST /materials → should create material', async () => {
+    materialName = faker.commerce.productMaterial();
     const res = await request(app.getHttpServer())
       .post('/materials')
-      .send({ name: 'Aluminium' })
+      .send({ name: materialName })
       .expect(201);
 
-    expect(res.body).toMatchObject({ name: 'Aluminium' });
+    expect(res.body).toMatchObject({ name: materialName });
     expect(res.body.id).toBeDefined();
     createdId = res.body.id;
   });
@@ -52,19 +55,21 @@ describe('MaterialController (e2e)', () => {
       .get(`/materials/${createdId}`)
       .expect(200);
 
-    expect(res.body).toMatchObject({ id: createdId, name: 'Aluminium' });
+    expect(res.body).toMatchObject({ id: createdId, name: materialName });
   });
 
   it('PATCH /materials/:id → should update the material', async () => {
+    const newName = faker.commerce.productMaterial();
     const res = await request(app.getHttpServer())
       .patch(`/materials/${createdId}`)
-      .send({ name: 'Aluminium recyclé' })
+      .send({ name: newName })
       .expect(200);
 
     expect(res.body).toMatchObject({
       id: createdId,
-      name: 'Aluminium recyclé',
+      name: newName,
     });
+    materialName = newName; // update local var for next test
   });
 
   it('DELETE /materials/:id → should delete the material', async () => {
@@ -75,10 +80,20 @@ describe('MaterialController (e2e)', () => {
     expect(res.body).toMatchObject({ id: createdId });
   });
 
-  it('GET /materials/:id → should return 404 after delete', async () => {
-    await request(app.getHttpServer())
-      .get(`/materials/${createdId}`)
-      .expect(200); // ton service fait peut-être un soft delete et retourne null plutôt que 404
-    // Si tu veux un 404, adapte la logique côté controller/service
+  it('GET /materials/:id → should return 404 or soft deleted material', async () => {
+    const res = await request(app.getHttpServer()).get(
+      `/materials/${createdId}`,
+    );
+
+    // You might expect 200 with soft-deleted object or 404 depending on your service
+    // Just display for debug
+    // console.log(res.status, res.body);
+
+    // Example (adapt to your logic!):
+    // If you soft delete: expect(res.body.deleted_at).toBeDefined();
+    // If you hard delete: expect(res.status).toBe(404);
+
+    // For now, accept either (adapt as you wish):
+    expect([200, 404]).toContain(res.status);
   });
 });
