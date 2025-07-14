@@ -1,0 +1,45 @@
+%% src\furniturematerial\furniturematerial.diagram.mmd
+
+classDiagram
+    %% DTOs
+    class CreateFurniturematerialDto {
+        +id_furniture: number
+        +id_material: number
+        +deleted_at?: Date
+    }
+    class UpdateFurniturematerialDto
+    UpdateFurniturematerialDto --|> CreateFurniturematerialDto : extends (PartialType)
+
+    %% Service
+    class FurniturematerialService {
+        +constructor(prisma: PrismaService)
+        +create(data: CreateFurniturematerialDto): Promise<FurnitureMaterial>
+        +findAll(): Promise<FurnitureMaterial[]>
+        +findOne(id: number): Promise<FurnitureMaterial>
+        +update(id: number, data: UpdateFurniturematerialDto): Promise<FurnitureMaterial>
+        +remove(id: number): Promise<FurnitureMaterial>
+    }
+
+    %% Controller
+    class FurniturematerialController {
+        +constructor(furniturematerialService: FurniturematerialService)
+        +create(createFurniturematerialDto: CreateFurniturematerialDto): Promise<FurnitureMaterial>
+        +findAll(): Promise<FurnitureMaterial[]>
+        +findOne(id: string): Promise<FurnitureMaterial>
+        +update(id: string, updateFurniturematerialDto: UpdateFurniturematerialDto): Promise<FurnitureMaterial>
+        +remove(id: string): Promise<FurnitureMaterial>
+    }
+
+    %% Module
+    class FurniturematerialModule {
+        <<Module>>
+    }
+
+    %% Relationships
+    FurniturematerialController --> FurniturematerialService : depends on
+    FurniturematerialController ..> CreateFurniturematerialDto : uses
+    FurniturematerialController ..> UpdateFurniturematerialDto : uses
+    FurniturematerialService ..> CreateFurniturematerialDto : uses
+    FurniturematerialService ..> UpdateFurniturematerialDto : uses
+    FurniturematerialModule o-- FurniturematerialController : provides
+    FurniturematerialModule o-- FurniturematerialService : provides

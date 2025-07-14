@@ -62,7 +62,7 @@ model furnituretype {
   id   Int    @id @default(autoincrement())
   name String
 
-  furniture furniture[]
+  furnitures furniture[]
 
   deleted_at DateTime?
 }

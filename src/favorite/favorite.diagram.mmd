@@ -1,0 +1,46 @@
+%% src\favorite\favorite.diagram.mmd
+
+classDiagram
+    %% DTOs
+    class CreateFavoriteDto {
+        +id_furniture: number
+        +id_user: number
+        +is_favorite: boolean
+        +deleted_at?: Date
+    }
+    class UpdateFavoriteDto
+    UpdateFavoriteDto --|> CreateFavoriteDto : extends (PartialType)
+
+    %% Service
+    class FavoriteService {
+        +constructor(prisma: PrismaService)
+        +create(data: CreateFavoriteDto): Promise<Favorite>
+        +findAll(): Promise<Favorite[]>
+        +findOne(id: number): Promise<Favorite>
+        +update(id: number, data: UpdateFavoriteDto): Promise<Favorite>
+        +remove(id: number): Promise<Favorite>
+    }
+
+    %% Controller
+    class FavoriteController {
+        +constructor(favoriteService: FavoriteService)
+        +create(createFavoriteDto: CreateFavoriteDto): Promise<Favorite>
+        +findAll(): Promise<Favorite[]>
+        +findOne(id: string): Promise<Favorite>
+        +update(id: string, updateFavoriteDto: UpdateFavoriteDto): Promise<Favorite>
+        +remove(id: string): Promise<Favorite>
+    }
+
+    %% Module
+    class FavoriteModule {
+        <<Module>>
+    }
+
+    %% Relationships
+    FavoriteController --> FavoriteService : depends on
+    FavoriteController ..> CreateFavoriteDto : uses
+    FavoriteController ..> UpdateFavoriteDto : uses
+    FavoriteService ..> CreateFavoriteDto : uses
+    FavoriteService ..> UpdateFavoriteDto : uses
+    FavoriteModule o-- FavoriteController : provides
+    FavoriteModule o-- FavoriteService : provides

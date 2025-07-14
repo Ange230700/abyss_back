@@ -1,2 +1,4 @@
+npx validate-branch-name
 npm test
+npm run test:e2e
 npx lint-staged

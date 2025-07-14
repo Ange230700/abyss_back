@@ -5,9 +5,9 @@ import { faker } from '@faker-js/faker';
 
 async function seedImage() {
   const furnitures = await prisma.furniture.findMany({ select: { id: true } });
-  const FURNITURE_IDS = furnitures.map((f) => f.id);
+  const FURNITURE_IDS = furnitures.map((f: { id: number }) => f.id);
   const IMAGES_PER_FURNITURE = 2;
-  const images = FURNITURE_IDS.flatMap((fid) =>
+  const images = FURNITURE_IDS.flatMap((fid: number) =>
     Array.from({ length: IMAGES_PER_FURNITURE }).map(() => ({
       id_furniture: fid,
       url: faker.image.urlPicsumPhotos({ width: 400, height: 300 }),
