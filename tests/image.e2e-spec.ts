@@ -1,5 +1,6 @@
 // tests\image.e2e-spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
@@ -8,6 +9,7 @@ import { AppModule } from '~/src/app.module';
 describe('ImageController (e2e)', () => {
   let app: INestApplication;
   let createdId: number;
+  let id_furniture: number;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -19,6 +21,22 @@ describe('ImageController (e2e)', () => {
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     );
     await app.init();
+
+    // Create a furniture for FK relation
+    const furnitureRes = await request(app.getHttpServer())
+      .post('/furnitures')
+      .send({
+        name: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        id_type: 1,
+        size: 'Medium',
+        colour: faker.color.human(),
+        quantity: faker.number.int({ min: 1, max: 10 }),
+        price: parseFloat(faker.commerce.price({ min: 10, max: 500, dec: 2 })),
+        status: 'Available',
+      });
+    expect(furnitureRes.status).toBe(201);
+    id_furniture = furnitureRes.body.id;
   });
 
   afterAll(async () => {
@@ -26,15 +44,16 @@ describe('ImageController (e2e)', () => {
   });
 
   it('POST /images - should create an image', async () => {
+    const url = faker.image.urlPicsumPhotos({ width: 400, height: 300 });
     const res = await request(app.getHttpServer()).post('/images').send({
-      id_furniture: 1,
-      url: 'https://picsum.photos/400/300',
+      id_furniture,
+      url,
     });
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('id');
-    expect(res.body.id_furniture).toBe(1);
-    expect(res.body.url).toBe('https://picsum.photos/400/300');
+    expect(res.body.id_furniture).toBe(id_furniture);
+    expect(res.body.url).toBe(url);
     createdId = res.body.id;
   });
 
@@ -53,12 +72,13 @@ describe('ImageController (e2e)', () => {
   });
 
   it('PATCH /images/:id - should update the image', async () => {
+    const newUrl = faker.image.urlPicsumPhotos({ width: 500, height: 500 });
     const res = await request(app.getHttpServer())
       .patch(`/images/${createdId}`)
-      .send({ url: 'https://example.com/img.png' });
+      .send({ url: newUrl });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('id', createdId);
-    expect(res.body.url).toBe('https://example.com/img.png');
+    expect(res.body.url).toBe(newUrl);
   });
 
   it('DELETE /images/:id - should soft delete the image', async () => {
