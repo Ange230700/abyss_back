@@ -1,5 +1,6 @@
 // src\material\material.controller.spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MaterialController } from '~/src/material/material.controller';
 import { MaterialService } from '~/src/material/material.service';
@@ -32,7 +33,7 @@ describe('MaterialController', () => {
   });
 
   it('should call service.create on create()', async () => {
-    const dto = { name: 'Glass' };
+    const dto = { name: faker.commerce.productMaterial() };
     service.create.mockResolvedValue('created');
     const result = await controller.create(dto as any);
     expect(service.create).toHaveBeenCalledWith(dto);
@@ -40,31 +41,38 @@ describe('MaterialController', () => {
   });
 
   it('should call service.findAll on findAll()', async () => {
-    service.findAll.mockResolvedValue(['mat1', 'mat2']);
+    const fakeArray = [
+      faker.commerce.productMaterial(),
+      faker.commerce.productMaterial(),
+    ];
+    service.findAll.mockResolvedValue(fakeArray);
     const result = await controller.findAll();
     expect(service.findAll).toHaveBeenCalled();
-    expect(result).toEqual(['mat1', 'mat2']);
+    expect(result).toEqual(fakeArray);
   });
 
   it('should call service.findOne on findOne()', async () => {
+    const id = faker.number.int({ min: 1, max: 1000 });
     service.findOne.mockResolvedValue('found');
-    const result = await controller.findOne('3');
-    expect(service.findOne).toHaveBeenCalledWith(3);
+    const result = await controller.findOne(id.toString());
+    expect(service.findOne).toHaveBeenCalledWith(id);
     expect(result).toBe('found');
   });
 
   it('should call service.update on update()', async () => {
-    const dto = { name: 'Plastic' };
+    const id = faker.number.int({ min: 1, max: 1000 });
+    const dto = { name: faker.commerce.productMaterial() };
     service.update.mockResolvedValue('updated');
-    const result = await controller.update('2', dto as any);
-    expect(service.update).toHaveBeenCalledWith(2, dto);
+    const result = await controller.update(id.toString(), dto as any);
+    expect(service.update).toHaveBeenCalledWith(id, dto);
     expect(result).toBe('updated');
   });
 
   it('should call service.remove on remove()', async () => {
+    const id = faker.number.int({ min: 1, max: 1000 });
     service.remove.mockResolvedValue('deleted');
-    const result = await controller.remove('9');
-    expect(service.remove).toHaveBeenCalledWith(9);
+    const result = await controller.remove(id.toString());
+    expect(service.remove).toHaveBeenCalledWith(id);
     expect(result).toBe('deleted');
   });
 });
