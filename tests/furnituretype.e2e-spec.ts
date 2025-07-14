@@ -1,5 +1,6 @@
 // tests\furnituretype.e2e-spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
@@ -8,6 +9,7 @@ import { AppModule } from '~/src/app.module';
 describe('FurnituretypeController (e2e)', () => {
   let app: INestApplication;
   let createdId: number;
+  let fakeTypeName: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -26,12 +28,14 @@ describe('FurnituretypeController (e2e)', () => {
   });
 
   it('POST /furniture-types → 201', async () => {
+    fakeTypeName =
+      faker.commerce.productAdjective() + '-' + faker.string.alphanumeric(5);
     const res = await request(app.getHttpServer())
       .post('/furniture-types')
-      .send({ name: 'TestType' });
+      .send({ name: fakeTypeName });
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('id');
-    expect(res.body.name).toBe('TestType');
+    expect(res.body.name).toBe(fakeTypeName);
     createdId = res.body.id;
   });
 
@@ -39,9 +43,10 @@ describe('FurnituretypeController (e2e)', () => {
     const res = await request(app.getHttpServer()).get('/furniture-types');
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
-    // optionnel : vérifier que notre type créé est dans la liste
     expect(
-      res.body.some((ft: any) => ft.id === createdId && ft.name === 'TestType'),
+      res.body.some(
+        (ft: any) => ft.id === createdId && ft.name === fakeTypeName,
+      ),
     ).toBe(true);
   });
 
@@ -51,15 +56,18 @@ describe('FurnituretypeController (e2e)', () => {
     );
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('id', createdId);
-    expect(res.body).toHaveProperty('name', 'TestType');
+    expect(res.body).toHaveProperty('name', fakeTypeName);
   });
 
   it('PATCH /furniture-types/:id → 200', async () => {
+    const newName =
+      faker.commerce.productAdjective() + '-' + faker.string.alphanumeric(5);
     const res = await request(app.getHttpServer())
       .patch(`/furniture-types/${createdId}`)
-      .send({ name: 'TypeModifié' });
+      .send({ name: newName });
     expect(res.status).toBe(200);
-    expect(res.body.name).toBe('TypeModifié');
+    expect(res.body.name).toBe(newName);
+    fakeTypeName = newName; // update for following tests
   });
 
   it('DELETE /furniture-types/:id → 200', async () => {
@@ -82,7 +90,6 @@ describe('FurnituretypeController (e2e)', () => {
   it('GET /furniture-types (après soft delete) ne doit plus contenir ce type', async () => {
     const res = await request(app.getHttpServer()).get('/furniture-types');
     expect(res.status).toBe(200);
-    // Optionnel : il se peut que le soft delete l’exclue du findAll
     expect(res.body.some((ft: any) => ft.id === createdId)).toBe(false);
   });
 });
