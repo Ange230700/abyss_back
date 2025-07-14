@@ -1,5 +1,6 @@
 // src\user\user.service.spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '~/src/user/user.service';
 import { PrismaService } from '~/src/prisma/prisma.service';
@@ -37,12 +38,12 @@ describe('UserService', () => {
 
   it('should create a user', async () => {
     const dto = {
-      user_name: 'john',
-      email: 'john@example.com',
-      password: 'abc',
-      role: 'customer',
+      user_name: faker.person.firstName().toLowerCase(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      role: faker.helpers.arrayElement(['admin', 'customer', 'user']),
     };
-    const created = { id: 1, ...dto };
+    const created = { id: faker.number.int(), ...dto };
     prisma.user.create.mockResolvedValue(created);
 
     const result = await service.create(dto as any);
@@ -51,7 +52,10 @@ describe('UserService', () => {
   });
 
   it('should find all users', async () => {
-    const users = [{ id: 1 }, { id: 2 }];
+    const users = [
+      { id: faker.number.int(), user_name: faker.person.firstName() },
+      { id: faker.number.int(), user_name: faker.person.firstName() },
+    ];
     prisma.user.findMany.mockResolvedValue(users);
 
     const result = await service.findAll();
@@ -60,31 +64,35 @@ describe('UserService', () => {
   });
 
   it('should find a user by id', async () => {
-    prisma.user.findUnique.mockResolvedValue({ id: 3 });
-    const result = await service.findOne(3);
-    expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id: 3 } });
-    expect(result).toEqual({ id: 3 });
+    const id = faker.number.int();
+    const found = { id, user_name: faker.person.firstName() };
+    prisma.user.findUnique.mockResolvedValue(found);
+    const result = await service.findOne(id);
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id } });
+    expect(result).toEqual(found);
   });
 
   it('should update a user', async () => {
-    const updateData = { email: 'new@example.com' };
-    const updated = { id: 2, email: 'new@example.com' };
+    const id = faker.number.int();
+    const updateData = { email: faker.internet.email() };
+    const updated = { id, ...updateData };
     prisma.user.update.mockResolvedValue(updated);
 
-    const result = await service.update(2, updateData as any);
+    const result = await service.update(id, updateData as any);
     expect(prisma.user.update).toHaveBeenCalledWith({
-      where: { id: 2 },
+      where: { id },
       data: updateData,
     });
     expect(result).toEqual(updated);
   });
 
   it('should delete a user', async () => {
-    const deleted = { id: 5 };
+    const id = faker.number.int();
+    const deleted = { id };
     prisma.user.delete.mockResolvedValue(deleted);
 
-    const result = await service.remove(5);
-    expect(prisma.user.delete).toHaveBeenCalledWith({ where: { id: 5 } });
+    const result = await service.remove(id);
+    expect(prisma.user.delete).toHaveBeenCalledWith({ where: { id } });
     expect(result).toEqual(deleted);
   });
 });
