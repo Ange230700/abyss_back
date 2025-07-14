@@ -1,5 +1,6 @@
 // src/furniture/furniture.service.spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FurnitureService } from '~/src/furniture/furniture.service';
 import { PrismaService } from '~/src/prisma/prisma.service';
@@ -36,16 +37,16 @@ describe('FurnitureService', () => {
 
   it('should create furniture', async () => {
     const dto = {
-      name: 'Chair',
-      description: 'desc',
-      id_type: 1,
-      size: 'L',
-      colour: 'Red',
-      quantity: 5,
-      price: 100,
+      name: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+      id_type: faker.number.int({ min: 1, max: 5 }),
+      size: faker.helpers.arrayElement(['S', 'M', 'L']),
+      colour: faker.color.human(),
+      quantity: faker.number.int({ min: 1, max: 100 }),
+      price: parseFloat(faker.commerce.price({ min: 10, max: 300, dec: 2 })),
       status: 'Available',
     };
-    const created = { id: 1, ...dto, deleted_at: null };
+    const created = { id: faker.number.int(), ...dto, deleted_at: null };
     prisma.furniture.create.mockResolvedValue(created);
 
     const result = await service.create(dto as any);
@@ -54,7 +55,10 @@ describe('FurnitureService', () => {
   });
 
   it('should find all furniture', async () => {
-    const data = [{ id: 1 }, { id: 2 }];
+    const data = [
+      { id: faker.number.int(), name: faker.commerce.productName() },
+      { id: faker.number.int(), name: faker.commerce.productName() },
+    ];
     prisma.furniture.findMany.mockResolvedValue(data);
 
     const result = await service.findAll();
@@ -65,35 +69,44 @@ describe('FurnitureService', () => {
   });
 
   it('should find one furniture by id', async () => {
-    prisma.furniture.findUnique.mockResolvedValue({ id: 2 });
-    const result = await service.findOne(2);
+    const id = faker.number.int();
+    const found = { id };
+    prisma.furniture.findUnique.mockResolvedValue(found);
+    const result = await service.findOne(id);
     expect(prisma.furniture.findUnique).toHaveBeenCalledWith({
-      where: { id: 2 },
+      where: { id },
     });
-    expect(result).toEqual({ id: 2 });
+    expect(result).toEqual(found);
   });
 
   it('should update furniture', async () => {
-    prisma.furniture.update.mockResolvedValue({ id: 3, name: 'Updated' });
-    const result = await service.update(3, { name: 'Updated' } as any);
+    const id = faker.number.int();
+    const newName = faker.commerce.productName();
+    const updateData = { name: newName };
+    const updated = { id, name: newName };
+    prisma.furniture.update.mockResolvedValue(updated);
+
+    const result = await service.update(id, updateData as any);
     expect(prisma.furniture.update).toHaveBeenCalledWith({
-      where: { id: 3 },
-      data: { name: 'Updated' },
+      where: { id },
+      data: updateData,
     });
-    expect(result).toEqual({ id: 3, name: 'Updated' });
+    expect(result).toEqual(updated);
   });
 
   it('should soft delete furniture', async () => {
+    const id = faker.number.int();
     const now = new Date();
-    prisma.furniture.update.mockResolvedValue({ id: 1, deleted_at: now });
+    const deleted = { id, deleted_at: now };
+    prisma.furniture.update.mockResolvedValue(deleted);
     jest.spyOn(global, 'Date').mockImplementation(() => now as any);
 
-    const result = await service.remove(1);
+    const result = await service.remove(id);
     expect(prisma.furniture.update).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { id },
       data: { deleted_at: now },
     });
-    expect(result).toEqual({ id: 1, deleted_at: now });
+    expect(result).toEqual(deleted);
 
     (global.Date as any).mockRestore?.();
   });
