@@ -1,5 +1,6 @@
 // src\material\material.service.spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MaterialService } from '~/src/material/material.service';
 import { PrismaService } from '~/src/prisma/prisma.service';
@@ -35,8 +36,8 @@ describe('MaterialService', () => {
   });
 
   it('should create a material', async () => {
-    const dto = { name: 'Wood' };
-    const created = { id: 1, ...dto, deleted_at: null };
+    const dto = { name: faker.commerce.productMaterial() };
+    const created = { id: faker.number.int(), ...dto, deleted_at: null };
     prisma.material.create.mockResolvedValue(created);
 
     const result = await service.create(dto as any);
@@ -45,7 +46,10 @@ describe('MaterialService', () => {
   });
 
   it('should find all materials', async () => {
-    const data = [{ id: 1 }, { id: 2 }];
+    const data = [
+      { id: faker.number.int(), name: faker.commerce.productMaterial() },
+      { id: faker.number.int(), name: faker.commerce.productMaterial() },
+    ];
     prisma.material.findMany.mockResolvedValue(data);
 
     const result = await service.findAll();
@@ -56,37 +60,41 @@ describe('MaterialService', () => {
   });
 
   it('should find one material by id', async () => {
-    prisma.material.findUnique.mockResolvedValue({ id: 3 });
-    const result = await service.findOne(3);
+    const id = faker.number.int();
+    const found = { id, name: faker.commerce.productMaterial() };
+    prisma.material.findUnique.mockResolvedValue(found);
+    const result = await service.findOne(id);
     expect(prisma.material.findUnique).toHaveBeenCalledWith({
-      where: { id: 3 },
+      where: { id },
     });
-    expect(result).toEqual({ id: 3 });
+    expect(result).toEqual(found);
   });
 
   it('should update a material', async () => {
-    const updateData = { name: 'Steel' };
-    const updated = { id: 2, name: 'Steel' };
+    const id = faker.number.int();
+    const updateData = { name: faker.commerce.productMaterial() };
+    const updated = { id, ...updateData };
     prisma.material.update.mockResolvedValue(updated);
 
-    const result = await service.update(2, updateData as any);
+    const result = await service.update(id, updateData as any);
     expect(prisma.material.update).toHaveBeenCalledWith({
-      where: { id: 2 },
+      where: { id },
       data: updateData,
     });
     expect(result).toEqual(updated);
   });
 
   it('should soft delete a material', async () => {
+    const id = faker.number.int();
     const now = new Date();
-    const deleted = { id: 5, deleted_at: now };
+    const deleted = { id, deleted_at: now };
     prisma.material.update.mockResolvedValue(deleted);
 
     jest.spyOn(global, 'Date').mockImplementation(() => now as any);
 
-    const result = await service.remove(5);
+    const result = await service.remove(id);
     expect(prisma.material.update).toHaveBeenCalledWith({
-      where: { id: 5 },
+      where: { id },
       data: { deleted_at: now },
     });
     expect(result).toEqual(deleted);
