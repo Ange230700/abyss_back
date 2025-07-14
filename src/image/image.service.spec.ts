@@ -1,5 +1,6 @@
 // src\image\image.service.spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ImageService } from '~/src/image/image.service';
 import { PrismaService } from '~/src/prisma/prisma.service';
@@ -35,8 +36,11 @@ describe('ImageService', () => {
   });
 
   it('should create an image', async () => {
-    const dto = { id_furniture: 1, url: 'https://picsum.photos/400/300' };
-    const created = { id: 1, ...dto, deleted_at: null };
+    const dto = {
+      id_furniture: faker.number.int({ min: 1, max: 20 }),
+      url: faker.image.url(),
+    };
+    const created = { id: faker.number.int(), ...dto, deleted_at: null };
     prisma.image.create.mockResolvedValue(created);
 
     const result = await service.create(dto as any);
@@ -45,7 +49,10 @@ describe('ImageService', () => {
   });
 
   it('should find all images', async () => {
-    const data = [{ id: 1 }, { id: 2 }];
+    const data = [
+      { id: faker.number.int(), url: faker.image.url() },
+      { id: faker.number.int(), url: faker.image.url() },
+    ];
     prisma.image.findMany.mockResolvedValue(data);
 
     const result = await service.findAll();
@@ -56,35 +63,39 @@ describe('ImageService', () => {
   });
 
   it('should find one image by id', async () => {
-    prisma.image.findUnique.mockResolvedValue({ id: 3 });
-    const result = await service.findOne(3);
-    expect(prisma.image.findUnique).toHaveBeenCalledWith({ where: { id: 3 } });
-    expect(result).toEqual({ id: 3 });
+    const id = faker.number.int();
+    const found = { id, url: faker.image.url() };
+    prisma.image.findUnique.mockResolvedValue(found);
+    const result = await service.findOne(id);
+    expect(prisma.image.findUnique).toHaveBeenCalledWith({ where: { id } });
+    expect(result).toEqual(found);
   });
 
   it('should update an image', async () => {
-    const updateData = { url: 'https://picsum.photos/300/200' };
-    const updated = { id: 2, ...updateData };
+    const id = faker.number.int();
+    const updateData = { url: faker.image.url() };
+    const updated = { id, ...updateData };
     prisma.image.update.mockResolvedValue(updated);
 
-    const result = await service.update(2, updateData as any);
+    const result = await service.update(id, updateData as any);
     expect(prisma.image.update).toHaveBeenCalledWith({
-      where: { id: 2 },
+      where: { id },
       data: updateData,
     });
     expect(result).toEqual(updated);
   });
 
   it('should soft delete an image', async () => {
+    const id = faker.number.int();
     const now = new Date();
-    const deleted = { id: 5, deleted_at: now };
+    const deleted = { id, deleted_at: now };
     prisma.image.update.mockResolvedValue(deleted);
 
     jest.spyOn(global, 'Date').mockImplementation(() => now as any);
 
-    const result = await service.remove(5);
+    const result = await service.remove(id);
     expect(prisma.image.update).toHaveBeenCalledWith({
-      where: { id: 5 },
+      where: { id },
       data: { deleted_at: now },
     });
     expect(result).toEqual(deleted);
