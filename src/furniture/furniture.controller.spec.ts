@@ -1,5 +1,6 @@
 // src/furniture/furniture.controller.spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FurnitureController } from '~/src/furniture/furniture.controller';
 import { FurnitureService } from '~/src/furniture/furniture.service';
@@ -33,13 +34,13 @@ describe('FurnitureController', () => {
 
   it('should call service.create on create()', async () => {
     const dto = {
-      name: 'Table',
-      description: 'desc',
-      id_type: 2,
-      size: 'M',
-      colour: 'Blue',
-      quantity: 3,
-      price: 50,
+      name: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+      id_type: faker.number.int({ min: 1, max: 5 }),
+      size: faker.helpers.arrayElement(['S', 'M', 'L']),
+      colour: faker.color.human(),
+      quantity: faker.number.int({ min: 1, max: 100 }),
+      price: parseFloat(faker.commerce.price({ min: 10, max: 300, dec: 2 })),
       status: 'Available',
     };
     service.create.mockResolvedValue('created');
@@ -49,31 +50,35 @@ describe('FurnitureController', () => {
   });
 
   it('should call service.findAll on findAll()', async () => {
-    service.findAll.mockResolvedValue(['item1', 'item2']);
+    const items = [faker.commerce.productName(), faker.commerce.productName()];
+    service.findAll.mockResolvedValue(items);
     const result = await controller.findAll();
     expect(service.findAll).toHaveBeenCalled();
-    expect(result).toEqual(['item1', 'item2']);
+    expect(result).toEqual(items);
   });
 
   it('should call service.findOne on findOne()', async () => {
+    const id = faker.number.int({ min: 1, max: 100 });
     service.findOne.mockResolvedValue('furniture');
-    const result = await controller.findOne('7');
-    expect(service.findOne).toHaveBeenCalledWith(7);
+    const result = await controller.findOne(id.toString());
+    expect(service.findOne).toHaveBeenCalledWith(id);
     expect(result).toBe('furniture');
   });
 
   it('should call service.update on update()', async () => {
-    const dto = { name: 'New name' };
+    const id = faker.number.int({ min: 1, max: 100 });
+    const dto = { name: faker.commerce.productName() };
     service.update.mockResolvedValue('updated');
-    const result = await controller.update('8', dto as any);
-    expect(service.update).toHaveBeenCalledWith(8, dto);
+    const result = await controller.update(id.toString(), dto as any);
+    expect(service.update).toHaveBeenCalledWith(id, dto);
     expect(result).toBe('updated');
   });
 
   it('should call service.remove on remove()', async () => {
+    const id = faker.number.int({ min: 1, max: 100 });
     service.remove.mockResolvedValue('deleted');
-    const result = await controller.remove('5');
-    expect(service.remove).toHaveBeenCalledWith(5);
+    const result = await controller.remove(id.toString());
+    expect(service.remove).toHaveBeenCalledWith(id);
     expect(result).toBe('deleted');
   });
 });
