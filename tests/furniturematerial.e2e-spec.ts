@@ -68,10 +68,6 @@ describe('FurniturematerialController (e2e)', () => {
       .post('/furniture-materials')
       .send(testFurnitureMaterial);
 
-    // Fail fast if creation fails!
-    if (res.status !== 201) {
-      console.error('POST /furniture-materials failed:', res.body);
-    }
     expect(res.status).toBe(201);
 
     expect(res.body).toMatchObject(testFurnitureMaterial);
