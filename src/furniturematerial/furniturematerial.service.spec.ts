@@ -1,5 +1,6 @@
 // src\furniturematerial\furniturematerial.service.spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FurniturematerialService } from '~/src/furniturematerial/furniturematerial.service';
 import { PrismaService } from '~/src/prisma/prisma.service';
@@ -35,8 +36,11 @@ describe('FurniturematerialService', () => {
   });
 
   it('should create furniturematerial', async () => {
-    const dto = { id_furniture: 1, id_material: 2 };
-    const created = { id: 10, ...dto, deleted_at: null };
+    const dto = {
+      id_furniture: faker.number.int({ min: 1, max: 20 }),
+      id_material: faker.number.int({ min: 1, max: 20 }),
+    };
+    const created = { id: faker.number.int(), ...dto, deleted_at: null };
     prisma.furniturematerial.create.mockResolvedValue(created);
 
     const result = await service.create(dto as any);
@@ -45,7 +49,18 @@ describe('FurniturematerialService', () => {
   });
 
   it('should find all furniturematerial', async () => {
-    const data = [{ id: 1 }, { id: 2 }];
+    const data = [
+      {
+        id: faker.number.int(),
+        id_furniture: faker.number.int(),
+        id_material: faker.number.int(),
+      },
+      {
+        id: faker.number.int(),
+        id_furniture: faker.number.int(),
+        id_material: faker.number.int(),
+      },
+    ];
     prisma.furniturematerial.findMany.mockResolvedValue(data);
 
     const result = await service.findAll();
@@ -56,37 +71,45 @@ describe('FurniturematerialService', () => {
   });
 
   it('should find one furniturematerial by id', async () => {
-    prisma.furniturematerial.findUnique.mockResolvedValue({ id: 3 });
-    const result = await service.findOne(3);
+    const id = faker.number.int();
+    const found = {
+      id,
+      id_furniture: faker.number.int(),
+      id_material: faker.number.int(),
+    };
+    prisma.furniturematerial.findUnique.mockResolvedValue(found);
+    const result = await service.findOne(id);
     expect(prisma.furniturematerial.findUnique).toHaveBeenCalledWith({
-      where: { id: 3 },
+      where: { id },
     });
-    expect(result).toEqual({ id: 3 });
+    expect(result).toEqual(found);
   });
 
   it('should update furniturematerial', async () => {
-    const updateData = { id_furniture: 2 };
-    const updated = { id: 4, id_furniture: 2 };
+    const id = faker.number.int();
+    const updateData = { id_furniture: faker.number.int({ min: 1, max: 20 }) };
+    const updated = { id, ...updateData };
     prisma.furniturematerial.update.mockResolvedValue(updated);
 
-    const result = await service.update(4, updateData as any);
+    const result = await service.update(id, updateData as any);
     expect(prisma.furniturematerial.update).toHaveBeenCalledWith({
-      where: { id: 4 },
+      where: { id },
       data: updateData,
     });
     expect(result).toEqual(updated);
   });
 
   it('should soft delete furniturematerial', async () => {
+    const id = faker.number.int();
     const now = new Date();
-    const deleted = { id: 5, deleted_at: now };
+    const deleted = { id, deleted_at: now };
     prisma.furniturematerial.update.mockResolvedValue(deleted);
 
     jest.spyOn(global, 'Date').mockImplementation(() => now as any);
 
-    const result = await service.remove(5);
+    const result = await service.remove(id);
     expect(prisma.furniturematerial.update).toHaveBeenCalledWith({
-      where: { id: 5 },
+      where: { id },
       data: { deleted_at: now },
     });
     expect(result).toEqual(deleted);
