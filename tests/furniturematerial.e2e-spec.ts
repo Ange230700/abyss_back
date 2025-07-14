@@ -1,19 +1,16 @@
 // tests\furniturematerial.e2e-spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '~/src/app.module';
 
-// Utilise des valeurs fictives, à ajuster selon tes fixtures/dev DB
-const testFurnitureMaterial = {
-  id_furniture: 1,
-  id_material: 1,
-};
-
 describe('FurniturematerialController (e2e)', () => {
   let app: INestApplication;
   let createdId: number;
+  let id_furniture: number;
+  let id_material: number;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -21,11 +18,44 @@ describe('FurniturematerialController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    // Utilisation du ValidationPipe pour simuler le comportement réel
     app.useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     );
     await app.init();
+
+    const sizesList = ['Small', 'Medium', 'Large'];
+
+    // 1. Create FURNITURE and MATERIAL before tests
+    const furnitureRes = await request(app.getHttpServer())
+      .post('/furnitures')
+      .send({
+        name: faker.commerce.productName(),
+        description: faker.commerce.productDescription(),
+        id_type: faker.number.int({ min: 1, max: 5 }),
+        size: faker.helpers.arrayElement(sizesList),
+        colour: faker.color.human(),
+        quantity: faker.number.int({ min: 1, max: 20 }),
+        price: parseFloat(faker.commerce.price({ min: 10, max: 300, dec: 2 })),
+        status: 'Available',
+        deleted_at: null,
+      });
+    expect(furnitureRes.status).toBe(201); // <--- add this
+    expect(furnitureRes.body).toHaveProperty('id');
+    id_furniture = furnitureRes.body.id;
+
+    const materialRes = await request(app.getHttpServer())
+      .post('/materials')
+      .send({
+        name: faker.commerce.productMaterial(),
+        deleted_at: null,
+      });
+    expect(materialRes.status).toBe(201); // <--- add this
+    expect(materialRes.body).toHaveProperty('id');
+    id_material = materialRes.body.id;
+
+    if (!id_furniture || !id_material) {
+      throw new Error('Could not create furniture or material for tests');
+    }
   });
 
   afterAll(async () => {
@@ -33,10 +63,16 @@ describe('FurniturematerialController (e2e)', () => {
   });
 
   it('POST /furniture-materials → should create', async () => {
+    const testFurnitureMaterial = { id_furniture, id_material };
     const res = await request(app.getHttpServer())
       .post('/furniture-materials')
-      .send(testFurnitureMaterial)
-      .expect(201);
+      .send(testFurnitureMaterial);
+
+    // Fail fast if creation fails!
+    if (res.status !== 201) {
+      console.error('POST /furniture-materials failed:', res.body);
+    }
+    expect(res.status).toBe(201);
 
     expect(res.body).toMatchObject(testFurnitureMaterial);
     expect(res.body).toHaveProperty('id');
@@ -60,18 +96,30 @@ describe('FurniturematerialController (e2e)', () => {
       .expect(200);
 
     expect(res.body).toHaveProperty('id', createdId);
-    expect(res.body).toMatchObject(testFurnitureMaterial);
+    expect(res.body).toMatchObject({
+      id_furniture,
+      id_material,
+    });
   });
 
   it('PATCH /furniture-materials/:id → should update', async () => {
-    const update = { id_material: 2 };
+    // Create a new material for the update
+    const materialRes = await request(app.getHttpServer())
+      .post('/materials')
+      .send({
+        name: faker.commerce.productMaterial(),
+        deleted_at: null,
+      });
+    const newMaterialId = materialRes.body.id;
+
+    const update = { id_material: newMaterialId };
     const res = await request(app.getHttpServer())
       .patch(`/furniture-materials/${createdId}`)
       .send(update)
       .expect(200);
 
     expect(res.body).toHaveProperty('id', createdId);
-    expect(res.body.id_material).toBe(2);
+    expect(res.body.id_material).toBe(newMaterialId);
   });
 
   it('DELETE /furniture-materials/:id → should soft delete', async () => {
