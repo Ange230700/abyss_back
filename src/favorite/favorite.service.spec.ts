@@ -1,5 +1,6 @@
 // src/favorite/favorite.service.spec.ts
 
+import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FavoriteService } from '~/src/favorite/favorite.service';
 import { PrismaService } from '~/src/prisma/prisma.service';
@@ -35,8 +36,16 @@ describe('FavoriteService', () => {
   });
 
   it('should create a favorite', async () => {
-    const dto = { id_furniture: 1, id_user: 2, is_favorite: true };
-    const created = { id: 10, ...dto, deleted_at: null };
+    const dto = {
+      id_furniture: faker.number.int({ min: 1, max: 1000 }),
+      id_user: faker.number.int({ min: 1, max: 1000 }),
+      is_favorite: faker.datatype.boolean(),
+    };
+    const created = {
+      id: faker.number.int({ min: 1, max: 1000 }),
+      ...dto,
+      deleted_at: null,
+    };
     prisma.favorite.create.mockResolvedValue(created);
 
     const result = await service.create(dto as any);
@@ -45,7 +54,20 @@ describe('FavoriteService', () => {
   });
 
   it('should find all favorites', async () => {
-    const favorites = [{ id: 1 }, { id: 2 }];
+    const favorites = [
+      {
+        id: faker.number.int(),
+        id_furniture: faker.number.int(),
+        id_user: faker.number.int(),
+        is_favorite: true,
+      },
+      {
+        id: faker.number.int(),
+        id_furniture: faker.number.int(),
+        id_user: faker.number.int(),
+        is_favorite: false,
+      },
+    ];
     prisma.favorite.findMany.mockResolvedValue(favorites);
 
     const result = await service.findAll();
@@ -56,38 +78,50 @@ describe('FavoriteService', () => {
   });
 
   it('should find one favorite by id', async () => {
-    prisma.favorite.findUnique.mockResolvedValue({ id: 1 });
+    const favoriteId = faker.number.int();
+    const favorite = {
+      id: favoriteId,
+      id_furniture: faker.number.int(),
+      id_user: faker.number.int(),
+      is_favorite: faker.datatype.boolean(),
+    };
+    prisma.favorite.findUnique.mockResolvedValue(favorite);
 
-    const result = await service.findOne(1);
+    const result = await service.findOne(favoriteId);
     expect(prisma.favorite.findUnique).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { id: favoriteId },
     });
-    expect(result).toEqual({ id: 1 });
+    expect(result).toEqual(favorite);
   });
 
   it('should update a favorite', async () => {
-    const updated = { id: 1, is_favorite: false };
+    const favoriteId = faker.number.int();
+    const updateData = { is_favorite: faker.datatype.boolean() };
+    const updated = {
+      id: favoriteId,
+      ...updateData,
+    };
     prisma.favorite.update.mockResolvedValue(updated);
 
-    const result = await service.update(1, { is_favorite: false } as any);
+    const result = await service.update(favoriteId, updateData as any);
     expect(prisma.favorite.update).toHaveBeenCalledWith({
-      where: { id: 1 },
-      data: { is_favorite: false },
+      where: { id: favoriteId },
+      data: updateData,
     });
     expect(result).toBe(updated);
   });
 
   it('should soft delete a favorite', async () => {
+    const favoriteId = faker.number.int();
     const now = new Date();
-    const deleted = { id: 1, deleted_at: now };
+    const deleted = { id: favoriteId, deleted_at: now };
     prisma.favorite.update.mockResolvedValue(deleted);
 
-    // Mock Date so test is deterministic
     jest.spyOn(global, 'Date').mockImplementation(() => now as any);
 
-    const result = await service.remove(1);
+    const result = await service.remove(favoriteId);
     expect(prisma.favorite.update).toHaveBeenCalledWith({
-      where: { id: 1 },
+      where: { id: favoriteId },
       data: { deleted_at: now },
     });
     expect(result).toBe(deleted);
