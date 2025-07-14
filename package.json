@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "npm run prisma:generate",
-    "build": "npx nest build",
+    "build": "nest build",
     "postbuild": "npm run prisma:migrate:deploy && npm run prisma:db:seed",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -20,7 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "dotenv -e .env.test -- jest --config ./tests/jest-e2e.json",
-    "prepare": "[ \"$NODE_ENV\" = \"development\" ] && husky || echo 'Skipping husky install in non-dev environment'",
+    "prepare": "husky",
     "commit": "git-cz",
     "commitlint": "commitlint --edit",
     "prisma:generate": "prisma generate",
