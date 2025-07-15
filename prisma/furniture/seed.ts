@@ -2,13 +2,19 @@
 
 import prisma from '~/prisma/lib/client';
 import { faker } from '@faker-js/faker';
+import { status } from '@prisma/client';
 
 async function seedFurniture() {
   const COUNT = 10;
 
   const FURNITURE_TYPE_IDS = [1, 2, 3];
 
-  const STATUS_OPTIONS = ['Available', 'Out_of_stock'] as const;
+  const STATUS_OPTIONS = [
+    status.AVAILABLE,
+    status.OUT_OF_STOCK,
+    status.LOW_STOCK,
+    status.DISCONTINUED,
+  ] as const;
 
   const fakeFurnituresList = Array.from({ length: COUNT }).map(() => ({
     name: faker.commerce.productName(),

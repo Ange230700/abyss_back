@@ -54,7 +54,7 @@ export class CreateFurnitureDto {
 
   @ApiProperty({
     enum: status,
-    example: status.Available,
+    example: status.AVAILABLE,
     description: 'Status',
   })
   @IsEnum(status)

@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '~/src/app.module';
+import { status } from '@prisma/client';
 
 describe('FavoriteController (e2e)', () => {
   let app: INestApplication;
@@ -18,13 +19,11 @@ describe('FavoriteController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    // Ajout du pipe de validation si tu l'utilises en prod
     app.useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     );
     await app.init();
 
-    // 1. Create a user
     const userRes = await request(app.getHttpServer())
       .post('/users')
       .send({
@@ -35,18 +34,17 @@ describe('FavoriteController (e2e)', () => {
       });
     userId = userRes.body.id;
 
-    // 2. Create furniture
     const furnitureRes = await request(app.getHttpServer())
       .post('/furnitures')
       .send({
         name: faker.commerce.productName(),
         description: faker.commerce.productDescription(),
-        id_type: 1, // or another valid type
+        id_type: 1,
         size: 'Medium',
         colour: 'Blue',
         quantity: 5,
         price: 99.99,
-        status: 'Available',
+        status: status.AVAILABLE,
       });
     furnitureId = furnitureRes.body.id;
   });
@@ -75,7 +73,6 @@ describe('FavoriteController (e2e)', () => {
     const res = await request(app.getHttpServer()).get('/favorite');
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
-    // Optionnel: tu peux vérifier que l'élément créé est présent
     expect(
       res.body.find((f: { id: number }) => f.id === createdFavoriteId),
     ).toBeDefined();

@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '~/src/app.module';
+import { status } from '@prisma/client';
 
 describe('ImageController (e2e)', () => {
   let app: INestApplication;
@@ -33,7 +34,7 @@ describe('ImageController (e2e)', () => {
         colour: faker.color.human(),
         quantity: faker.number.int({ min: 1, max: 10 }),
         price: parseFloat(faker.commerce.price({ min: 10, max: 500, dec: 2 })),
-        status: 'Available',
+        status: status.AVAILABLE,
       });
     expect(furnitureRes.status).toBe(201);
     id_furniture = furnitureRes.body.id;

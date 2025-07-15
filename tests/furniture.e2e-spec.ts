@@ -18,7 +18,7 @@ const baseFurniture = {
   colour: faker.color.human(), // e.g. "Blue"
   quantity: faker.number.int({ min: 1, max: 100 }),
   price: parseFloat(faker.commerce.price({ min: 50, max: 500, dec: 2 })),
-  status: status.Available,
+  status: status.AVAILABLE,
   deleted_at: null,
 };
 
