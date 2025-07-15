@@ -18,7 +18,7 @@ export class MaterialService {
   }
 
   findOne(id: number) {
-    return this.prisma.material.findUnique({ where: { id } });
+    return this.prisma.material.findUnique({ where: { id, deleted_at: null } });
   }
 
   update(id: number, data: UpdateMaterialDto) {

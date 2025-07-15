@@ -74,7 +74,7 @@ describe('FurnitureService', () => {
     prisma.furniture.findUnique.mockResolvedValue(found);
     const result = await service.findOne(id);
     expect(prisma.furniture.findUnique).toHaveBeenCalledWith({
-      where: { id },
+      where: { id, deleted_at: null },
     });
     expect(result).toEqual(found);
   });

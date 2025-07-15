@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FurnituretypeService } from '~/src/furnituretype/furnituretype.service';
@@ -36,8 +37,10 @@ export class FurnituretypeController {
   @Get(':id')
   @ApiOperation({ summary: 'Get furniture type by ID' })
   @ApiResponse({ status: 200, description: 'Furniture type found' })
-  findOne(@Param('id') id: string) {
-    return this.furnituretypeService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const item = await this.furnituretypeService.findOne(+id);
+    if (!item) throw new NotFoundException('Furniture type not found');
+    return item;
   }
 
   @Patch(':id')

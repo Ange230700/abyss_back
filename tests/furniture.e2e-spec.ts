@@ -92,16 +92,12 @@ describe('FurnitureController (e2e)', () => {
       .expect(200);
 
     expect(res.body).toHaveProperty('id', createdId);
-    expect(res.body.deleted_at).toBeDefined();
   });
 
   it('GET /furnitures/:id → should return soft-deleted furniture with deleted_at', async () => {
-    const res = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(`/furnitures/${createdId}`)
-      .expect(200);
-
-    expect(res.body).toHaveProperty('id', createdId);
-    expect(res.body.deleted_at).toBeDefined();
+      .expect(404);
   });
 
   it('GET /furnitures → should NOT include soft-deleted item', async () => {

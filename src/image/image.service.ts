@@ -18,7 +18,7 @@ export class ImageService {
   }
 
   findOne(id: number) {
-    return this.prisma.image.findUnique({ where: { id } });
+    return this.prisma.image.findUnique({ where: { id, deleted_at: null } });
   }
 
   update(id: number, data: UpdateImageDto) {

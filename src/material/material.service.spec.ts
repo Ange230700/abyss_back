@@ -65,7 +65,7 @@ describe('MaterialService', () => {
     prisma.material.findUnique.mockResolvedValue(found);
     const result = await service.findOne(id);
     expect(prisma.material.findUnique).toHaveBeenCalledWith({
-      where: { id },
+      where: { id, deleted_at: null },
     });
     expect(result).toEqual(found);
   });

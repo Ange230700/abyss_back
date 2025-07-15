@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ImageService } from '~/src/image/image.service';
@@ -36,8 +37,10 @@ export class ImageController {
   @Get(':id')
   @ApiOperation({ summary: 'Get image by ID' })
   @ApiResponse({ status: 200, description: 'Image found' })
-  findOne(@Param('id') id: string) {
-    return this.imageService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const item = await this.imageService.findOne(+id);
+    if (!item) throw new NotFoundException('Image not found');
+    return item;
   }
 
   @Patch(':id')

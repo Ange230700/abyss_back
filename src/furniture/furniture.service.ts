@@ -18,7 +18,9 @@ export class FurnitureService {
   }
 
   findOne(id: number) {
-    return this.prisma.furniture.findUnique({ where: { id } });
+    return this.prisma.furniture.findUnique({
+      where: { id, deleted_at: null },
+    });
   }
 
   update(id: number, data: UpdateFurnitureDto) {

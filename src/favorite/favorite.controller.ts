@@ -8,14 +8,15 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FavoriteService } from '~/src/favorite/favorite.service';
 import { CreateFavoriteDto } from '~/src/favorite/dto/create-favorite.dto';
 import { UpdateFavoriteDto } from '~/src/favorite/dto/update-favorite.dto';
 
-@ApiTags('favorite')
-@Controller('favorite')
+@ApiTags('favorites')
+@Controller('favorites')
 export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
 
@@ -36,8 +37,10 @@ export class FavoriteController {
   @Get(':id')
   @ApiOperation({ summary: 'Get favorite by ID' })
   @ApiResponse({ status: 200, description: 'Favorite found' })
-  findOne(@Param('id') id: string) {
-    return this.favoriteService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const item = await this.favoriteService.findOne(+id);
+    if (!item) throw new NotFoundException('Furniture not found');
+    return item;
   }
 
   @Patch(':id')

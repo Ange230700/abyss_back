@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MaterialService } from '~/src/material/material.service';
@@ -36,8 +37,10 @@ export class MaterialController {
   @Get(':id')
   @ApiOperation({ summary: 'Get material by ID' })
   @ApiResponse({ status: 200, description: 'Material found' })
-  findOne(@Param('id') id: string) {
-    return this.materialService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const item = await this.materialService.findOne(+id);
+    if (!item) throw new NotFoundException('Material not found');
+    return item;
   }
 
   @Patch(':id')

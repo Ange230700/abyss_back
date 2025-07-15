@@ -18,7 +18,7 @@ export class FavoriteService {
   }
 
   findOne(id: number) {
-    return this.prisma.favorite.findUnique({ where: { id } });
+    return this.prisma.favorite.findUnique({ where: { id, deleted_at: null } });
   }
 
   update(id: number, data: UpdateFavoriteDto) {

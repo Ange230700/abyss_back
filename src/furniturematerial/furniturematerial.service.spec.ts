@@ -80,7 +80,7 @@ describe('FurniturematerialService', () => {
     prisma.furniturematerial.findUnique.mockResolvedValue(found);
     const result = await service.findOne(id);
     expect(prisma.furniturematerial.findUnique).toHaveBeenCalledWith({
-      where: { id },
+      where: { id, deleted_at: null },
     });
     expect(result).toEqual(found);
   });

@@ -20,7 +20,9 @@ export class FurniturematerialService {
   }
 
   findOne(id: number) {
-    return this.prisma.furniturematerial.findUnique({ where: { id } });
+    return this.prisma.furniturematerial.findUnique({
+      where: { id, deleted_at: null },
+    });
   }
 
   update(id: number, data: UpdateFurniturematerialDto) {

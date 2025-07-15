@@ -68,7 +68,9 @@ describe('UserService', () => {
     const found = { id, user_name: faker.person.firstName() };
     prisma.user.findUnique.mockResolvedValue(found);
     const result = await service.findOne(id);
-    expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id } });
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+      where: { id, deleted_at: null },
+    });
     expect(result).toEqual(found);
   });
 

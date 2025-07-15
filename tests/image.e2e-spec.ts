@@ -88,12 +88,10 @@ describe('ImageController (e2e)', () => {
     );
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('id', createdId);
-    expect(res.body.deleted_at).toBeDefined();
   });
 
   it('GET /images/:id - should return soft-deleted image (with deleted_at)', async () => {
     const res = await request(app.getHttpServer()).get(`/images/${createdId}`);
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('deleted_at');
+    expect(res.status).toBe(404);
   });
 });

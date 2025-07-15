@@ -53,14 +53,14 @@ describe('FavoriteController (e2e)', () => {
     await app.close();
   });
 
-  it('POST /favorite → create', async () => {
+  it('POST /favorites → create', async () => {
     const favoriteDto = {
       id_furniture: furnitureId,
       id_user: userId,
       is_favorite: true,
     };
     const res = await request(app.getHttpServer())
-      .post('/favorite')
+      .post('/favorites')
       .send(favoriteDto);
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('id');
@@ -69,8 +69,8 @@ describe('FavoriteController (e2e)', () => {
     createdFavoriteId = res.body.id;
   });
 
-  it('GET /favorite → findAll', async () => {
-    const res = await request(app.getHttpServer()).get('/favorite');
+  it('GET /favorites → findAll', async () => {
+    const res = await request(app.getHttpServer()).get('/favorites');
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(
@@ -78,26 +78,26 @@ describe('FavoriteController (e2e)', () => {
     ).toBeDefined();
   });
 
-  it('GET /favorite/:id → findOne', async () => {
+  it('GET /favorites/:id → findOne', async () => {
     const res = await request(app.getHttpServer()).get(
-      `/favorite/${createdFavoriteId}`,
+      `/favorites/${createdFavoriteId}`,
     );
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('id', createdFavoriteId);
     expect(res.body).toHaveProperty('id_user', userId);
   });
 
-  it('PATCH /favorite/:id → update', async () => {
+  it('PATCH /favorites/:id → update', async () => {
     const res = await request(app.getHttpServer())
-      .patch(`/favorite/${createdFavoriteId}`)
+      .patch(`/favorites/${createdFavoriteId}`)
       .send({ is_favorite: false });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('is_favorite', false);
   });
 
-  it('DELETE /favorite/:id → soft delete', async () => {
+  it('DELETE /favorites/:id → soft delete', async () => {
     const res = await request(app.getHttpServer()).delete(
-      `/favorite/${createdFavoriteId}`,
+      `/favorites/${createdFavoriteId}`,
     );
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('deleted_at');
