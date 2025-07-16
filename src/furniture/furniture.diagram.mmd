@@ -11,7 +11,7 @@ classDiagram
         +quantity: number
         +price: number
         +status: status
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
     class UpdateFurnitureDto
     UpdateFurnitureDto --|> CreateFurnitureDto : extends (PartialType)
@@ -27,7 +27,7 @@ classDiagram
         +price: number
         +status: status
         +imageUrls?: string[]
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
 
     %% Service

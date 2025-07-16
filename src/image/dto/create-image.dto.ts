@@ -24,5 +24,5 @@ export class CreateImageDto {
     description: 'Soft delete timestamp (optional)',
   })
   @IsOptional()
-  deleted_at?: Date;
+  deleted_at?: Date | null;
 }

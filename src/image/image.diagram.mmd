@@ -5,29 +5,36 @@ classDiagram
     class CreateImageDto {
         +id_furniture: number
         +url: string
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
     class UpdateImageDto
     UpdateImageDto --|> CreateImageDto : extends (PartialType)
 
+    class ImageResponseDto {
+        +id: number
+        +id_furniture: number
+        +url: string
+        +deleted_at?: Date | null
+    }
+
     %% Service
     class ImageService {
         +constructor(prisma: PrismaService)
-        +create(data: CreateImageDto): Promise<Image>
-        +findAll(): Promise<Image[]>
-        +findOne(id: number): Promise<Image>
-        +update(id: number, data: UpdateImageDto): Promise<Image>
-        +remove(id: number): Promise<Image>
+        +create(data: CreateImageDto): Promise<image>
+        +findAll(): Promise<image[]>
+        +findOne(id: number): Promise<image | null>
+        +update(id: number, data: UpdateImageDto): Promise<image>
+        +remove(id: number): Promise<image>
     }
 
     %% Controller
     class ImageController {
         +constructor(imageService: ImageService)
-        +create(createImageDto: CreateImageDto): Promise<Image>
-        +findAll(): Promise<Image[]>
-        +findOne(id: string): Promise<Image>
-        +update(id: string, updateImageDto: UpdateImageDto): Promise<Image>
-        +remove(id: string): Promise<Image>
+        +create(createImageDto: CreateImageDto): Promise<ImageResponseDto>
+        +findAll(): Promise<ImageResponseDto[]>
+        +findOne(id: string): Promise<ImageResponseDto>
+        +update(id: string, updateImageDto: UpdateImageDto): Promise<ImageResponseDto>
+        +remove(id: string): Promise<ImageResponseDto>
     }
 
     %% Module
@@ -39,8 +46,8 @@ classDiagram
     ImageController --> ImageService : depends on
     ImageController ..> CreateImageDto : uses
     ImageController ..> UpdateImageDto : uses
+    ImageController ..> ImageResponseDto : returns
     ImageService ..> CreateImageDto : uses
     ImageService ..> UpdateImageDto : uses
     ImageModule o-- ImageController : provides
     ImageModule o-- ImageService : provides
-

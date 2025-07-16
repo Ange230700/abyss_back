@@ -6,7 +6,7 @@ classDiagram
         +id_furniture: number
         +id_user: number
         +is_favorite: boolean
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
     class UpdateFavoriteDto
     UpdateFavoriteDto --|> CreateFavoriteDto : extends (PartialType)
@@ -16,7 +16,7 @@ classDiagram
         +id_furniture: number
         +id_user: number
         +is_favorite: boolean
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
 
     %% Service

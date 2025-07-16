@@ -5,7 +5,7 @@ classDiagram
     class CreateFurniturematerialDto {
         +id_furniture: number
         +id_material: number
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
     class UpdateFurniturematerialDto
     UpdateFurniturematerialDto --|> CreateFurniturematerialDto : extends (PartialType)
@@ -14,7 +14,7 @@ classDiagram
         +id: number
         +id_furniture: number
         +id_material: number
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
 
     %% Service
