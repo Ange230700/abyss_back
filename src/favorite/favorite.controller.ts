@@ -63,18 +63,28 @@ export class FavoriteController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update favorite by ID' })
-  @ApiResponse({ status: 200, description: 'Favorite updated' })
-  update(
+  @ApiResponse({
+    status: 200,
+    description: 'Favorite updated',
+    type: FavoriteResponseDto,
+  })
+  async update(
     @Param('id') id: string,
     @Body() updateFavoriteDto: UpdateFavoriteDto,
-  ) {
-    return this.favoriteService.update(+id, updateFavoriteDto);
+  ): Promise<FavoriteResponseDto> {
+    const updated = await this.favoriteService.update(+id, updateFavoriteDto);
+    return plainToInstance(FavoriteResponseDto, updated);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete favorite by ID' })
-  @ApiResponse({ status: 200, description: 'Favorite soft deleted' })
-  remove(@Param('id') id: string) {
-    return this.favoriteService.remove(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'Favorite soft deleted',
+    type: FavoriteResponseDto,
+  })
+  async remove(@Param('id') id: string): Promise<FavoriteResponseDto> {
+    const deleted = await this.favoriteService.remove(+id);
+    return plainToInstance(FavoriteResponseDto, deleted);
   }
 }

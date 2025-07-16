@@ -88,7 +88,7 @@ describe('FavoriteController', () => {
     service.update.mockResolvedValue(updated);
     const result = await controller.update(favId.toString(), dto as any);
     expect(service.update).toHaveBeenCalledWith(favId, dto);
-    expect(result).toBe(updated);
+    expect(result).toMatchObject(updated);
   });
 
   it('should call service.remove on remove()', async () => {

@@ -2,7 +2,7 @@
 
 import { faker } from '@faker-js/faker';
 import { IsInt, IsBoolean, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateFavoriteDto {
   @ApiProperty({
@@ -26,10 +26,12 @@ export class CreateFavoriteDto {
   @IsBoolean()
   is_favorite: boolean;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: faker.date.recent().toISOString(),
-    description: 'Deletion timestamp',
+    description: 'Soft delete timestamp (optional)',
+    required: false,
+    nullable: true,
   })
   @IsOptional()
-  deleted_at?: Date;
+  deleted_at?: Date | null;
 }
