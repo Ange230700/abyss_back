@@ -31,7 +31,8 @@ export class UserController {
   })
   async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const created = await this.userService.create(createUserDto);
-    return plainToInstance(UserResponseDto, created);
+    const { password, ...safeUser } = created;
+    return plainToInstance(UserResponseDto, safeUser);
   }
 
   @Get()
@@ -43,7 +44,9 @@ export class UserController {
   })
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.userService.findAll();
-    return plainToInstance(UserResponseDto, users);
+    return users.map(({ password, ...rest }) =>
+      plainToInstance(UserResponseDto, rest),
+    );
   }
 
   @Get(':id')
@@ -54,9 +57,10 @@ export class UserController {
     type: UserResponseDto,
   })
   async findOne(@Param('id') id: string): Promise<UserResponseDto> {
-    const user = await this.userService.findOne(+id);
+    const user = await this.userService.findOne(Number(id));
     if (!user) throw new NotFoundException('User not found');
-    return plainToInstance(UserResponseDto, user);
+    const { password, ...safeUser } = user;
+    return plainToInstance(UserResponseDto, safeUser);
   }
 
   @Patch(':id')
@@ -70,8 +74,9 @@ export class UserController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponseDto> {
-    const updated = await this.userService.update(+id, updateUserDto);
-    return plainToInstance(UserResponseDto, updated);
+    const updated = await this.userService.update(Number(id), updateUserDto);
+    const { password, ...safeUser } = updated;
+    return plainToInstance(UserResponseDto, safeUser);
   }
 
   @Delete(':id')
@@ -82,7 +87,8 @@ export class UserController {
     type: UserResponseDto,
   })
   async remove(@Param('id') id: string): Promise<UserResponseDto> {
-    const deleted = await this.userService.remove(+id);
-    return plainToInstance(UserResponseDto, deleted);
+    const deleted = await this.userService.remove(Number(id));
+    const { password, ...safeUser } = deleted;
+    return plainToInstance(UserResponseDto, safeUser);
   }
 }
