@@ -14,6 +14,8 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserService } from '~/src/user/user.service';
 import { CreateUserDto } from '~/src/user/dto/create-user.dto';
 import { UpdateUserDto } from '~/src/user/dto/update-user.dto';
+import { UserResponseDto } from '~/src/user/dto/user-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('users')
 @Controller('users')
@@ -29,19 +31,27 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'List of users' })
-  findAll() {
-    return this.userService.findAll();
+  @ApiResponse({
+    status: 200,
+    description: 'List of users',
+    type: [UserResponseDto],
+  })
+  async findAll(): Promise<UserResponseDto[]> {
+    const users = await this.userService.findAll();
+    return plainToInstance(UserResponseDto, users);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })
-  @ApiResponse({ status: 200, description: 'The found user' })
-  async findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id).then((user) => {
-      if (!user) throw new NotFoundException('User not found');
-      return user;
-    });
+  @ApiResponse({
+    status: 200,
+    description: 'The found user',
+    type: UserResponseDto,
+  })
+  async findOne(@Param('id') id: string): Promise<UserResponseDto> {
+    const user = await this.userService.findOne(+id);
+    if (!user) throw new NotFoundException('User not found');
+    return plainToInstance(UserResponseDto, user);
   }
 
   @Patch(':id')

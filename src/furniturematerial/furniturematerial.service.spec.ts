@@ -66,6 +66,7 @@ describe('FurniturematerialService', () => {
     const result = await service.findAll();
     expect(prisma.furniturematerial.findMany).toHaveBeenCalledWith({
       where: { deleted_at: null },
+      include: { furniture: true, material: true },
     });
     expect(result).toBe(data);
   });

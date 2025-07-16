@@ -14,7 +14,7 @@ export class UserService {
   }
 
   findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({ where: { deleted_at: null } });
   }
 
   findOne(id: number) {

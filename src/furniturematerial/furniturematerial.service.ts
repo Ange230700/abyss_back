@@ -16,6 +16,10 @@ export class FurniturematerialService {
   findAll() {
     return this.prisma.furniturematerial.findMany({
       where: { deleted_at: null },
+      include: {
+        furniture: true,
+        material: true,
+      },
     });
   }
 

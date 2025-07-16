@@ -14,6 +14,8 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FavoriteService } from '~/src/favorite/favorite.service';
 import { CreateFavoriteDto } from '~/src/favorite/dto/create-favorite.dto';
 import { UpdateFavoriteDto } from '~/src/favorite/dto/update-favorite.dto';
+import { FavoriteResponseDto } from '~/src/favorite/dto/favorite-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('favorites')
 @Controller('favorites')
@@ -22,25 +24,41 @@ export class FavoriteController {
 
   @Post()
   @ApiOperation({ summary: 'Create favorite' })
-  @ApiResponse({ status: 201, description: 'Favorite created' })
-  create(@Body() createFavoriteDto: CreateFavoriteDto) {
-    return this.favoriteService.create(createFavoriteDto);
+  @ApiResponse({
+    status: 201,
+    description: 'Favorite created',
+    type: FavoriteResponseDto,
+  })
+  async create(
+    @Body() createFavoriteDto: CreateFavoriteDto,
+  ): Promise<FavoriteResponseDto> {
+    const favorite = await this.favoriteService.create(createFavoriteDto);
+    return plainToInstance(FavoriteResponseDto, favorite);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all favorites' })
-  @ApiResponse({ status: 200, description: 'List of favorites' })
-  findAll() {
-    return this.favoriteService.findAll();
+  @ApiResponse({
+    status: 200,
+    description: 'List of favorites',
+    type: [FavoriteResponseDto],
+  })
+  async findAll(): Promise<FavoriteResponseDto[]> {
+    const data = await this.favoriteService.findAll();
+    return plainToInstance(FavoriteResponseDto, data);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get favorite by ID' })
-  @ApiResponse({ status: 200, description: 'Favorite found' })
-  async findOne(@Param('id') id: string) {
+  @ApiResponse({
+    status: 200,
+    description: 'Favorite found',
+    type: FavoriteResponseDto,
+  })
+  async findOne(@Param('id') id: string): Promise<FavoriteResponseDto> {
     const item = await this.favoriteService.findOne(+id);
     if (!item) throw new NotFoundException('Furniture not found');
-    return item;
+    return plainToInstance(FavoriteResponseDto, item);
   }
 
   @Patch(':id')
