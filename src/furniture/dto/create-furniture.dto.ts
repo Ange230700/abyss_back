@@ -20,7 +20,10 @@ export class CreateFurnitureDto {
   @IsString()
   description: string;
 
-  @ApiProperty({ example: 1, description: 'Type ID' })
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 5 }),
+    description: 'Type ID',
+  })
   @IsInt()
   id_type: number;
 
@@ -60,7 +63,12 @@ export class CreateFurnitureDto {
   @IsEnum(status)
   status: status;
 
-  @ApiPropertyOptional({ example: faker.date.recent().toISOString() })
+  @ApiPropertyOptional({
+    example: faker.date.recent().toISOString(),
+    description: 'Deletion timestamp',
+    required: false,
+    nullable: true,
+  })
   @IsOptional()
   deleted_at?: Date;
 }

@@ -16,24 +16,38 @@ classDiagram
     class UpdateFurnitureDto
     UpdateFurnitureDto --|> CreateFurnitureDto : extends (PartialType)
 
+    class FurnitureResponseDto {
+        +id: number
+        +name: string
+        +description: string
+        +id_type: number
+        +size: string
+        +colour: string
+        +quantity: number
+        +price: number
+        +status: status
+        +imageUrls?: string[]
+        +deleted_at?: Date
+    }
+
     %% Service
     class FurnitureService {
         +constructor(prisma: PrismaService)
-        +create(data: CreateFurnitureDto): Promise<Furniture>
-        +findAll(): Promise<Furniture[]>
-        +findOne(id: number): Promise<Furniture>
-        +update(id: number, data: UpdateFurnitureDto): Promise<Furniture>
-        +remove(id: number): Promise<Furniture>
+        +create(data: CreateFurnitureDto): Promise<furniture>
+        +findAll(): Promise<furniture[]>
+        +findOne(id: number): Promise<furniture>
+        +update(id: number, data: UpdateFurnitureDto): Promise<furniture>
+        +remove(id: number): Promise<furniture>
     }
 
     %% Controller
     class FurnitureController {
         +constructor(furnitureService: FurnitureService)
-        +create(createFurnitureDto: CreateFurnitureDto): Promise<Furniture>
-        +findAll(): Promise<Furniture[]>
-        +findOne(id: string): Promise<Furniture>
-        +update(id: string, updateFurnitureDto: UpdateFurnitureDto): Promise<Furniture>
-        +remove(id: string): Promise<Furniture>
+        +create(createFurnitureDto: CreateFurnitureDto): Promise<FurnitureResponseDto>
+        +findAll(): Promise<FurnitureResponseDto[]>
+        +findOne(id: string): Promise<FurnitureResponseDto>
+        +update(id: string, updateFurnitureDto: UpdateFurnitureDto): Promise<FurnitureResponseDto>
+        +remove(id: string): Promise<FurnitureResponseDto>
     }
 
     %% Module
@@ -45,6 +59,7 @@ classDiagram
     FurnitureController --> FurnitureService : depends on
     FurnitureController ..> CreateFurnitureDto : uses
     FurnitureController ..> UpdateFurnitureDto : uses
+    FurnitureController ..> FurnitureResponseDto : returns
     FurnitureService ..> CreateFurnitureDto : uses
     FurnitureService ..> UpdateFurnitureDto : uses
     FurnitureModule o-- FurnitureController : provides
