@@ -133,7 +133,7 @@ docker-compose up --build
 
 Interactive Swagger docs are available after launch:
 
-- Visit: [http://localhost:3000/docs](http://localhost:3000/docs)
+- Visit: [https://abyss-back.onrender.com/docs](https://abyss-back.onrender.com/docs)
 
 **Entities:**
 
@@ -182,10 +182,12 @@ Create a `.env` file at the project root with:
 
 ```env
 DATABASE_URL="mysql://user:password@localhost:3306/mydb"
+SKIP_CLEANUP=false
 FRONT_API_BASE_URL="http://localhost:3001"
-PORT=3000
+NODE_ENV=development
 SOFT_DELETE_MODE=true
 DISABLE_SOFT_DELETE=false
+CONFIRM_SOFT_DELETE=YES_I_AM_SURE
 ```
 
 - See `.env.sample` for more options.
