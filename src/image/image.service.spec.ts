@@ -67,7 +67,9 @@ describe('ImageService', () => {
     const found = { id, url: faker.image.url() };
     prisma.image.findUnique.mockResolvedValue(found);
     const result = await service.findOne(id);
-    expect(prisma.image.findUnique).toHaveBeenCalledWith({ where: { id } });
+    expect(prisma.image.findUnique).toHaveBeenCalledWith({
+      where: { id, deleted_at: null },
+    });
     expect(result).toEqual(found);
   });
 

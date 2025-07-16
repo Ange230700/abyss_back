@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FavoriteController } from '~/src/favorite/favorite.controller';
 import { FavoriteService } from '~/src/favorite/favorite.service';
+import { FavoriteResponseDto } from '~/src/favorite/dto/favorite-response.dto';
 
 const serviceMock = {
   create: jest.fn(),
@@ -76,7 +77,8 @@ describe('FavoriteController', () => {
     service.findOne.mockResolvedValue(favorite);
     const result = await controller.findOne(favId.toString());
     expect(service.findOne).toHaveBeenCalledWith(favId);
-    expect(result).toBe(favorite);
+    expect(result).toBeInstanceOf(FavoriteResponseDto);
+    expect(result).toEqual(favorite);
   });
 
   it('should call service.update on update()', async () => {
@@ -86,7 +88,7 @@ describe('FavoriteController', () => {
     service.update.mockResolvedValue(updated);
     const result = await controller.update(favId.toString(), dto as any);
     expect(service.update).toHaveBeenCalledWith(favId, dto);
-    expect(result).toBe(updated);
+    expect(result).toMatchObject(updated);
   });
 
   it('should call service.remove on remove()', async () => {

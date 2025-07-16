@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '~/src/app.module';
+import { status } from '@prisma/client';
 
 describe('FavoriteController (e2e)', () => {
   let app: INestApplication;
@@ -18,13 +19,11 @@ describe('FavoriteController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    // Ajout du pipe de validation si tu l'utilises en prod
     app.useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     );
     await app.init();
 
-    // 1. Create a user
     const userRes = await request(app.getHttpServer())
       .post('/users')
       .send({
@@ -35,18 +34,17 @@ describe('FavoriteController (e2e)', () => {
       });
     userId = userRes.body.id;
 
-    // 2. Create furniture
     const furnitureRes = await request(app.getHttpServer())
       .post('/furnitures')
       .send({
         name: faker.commerce.productName(),
         description: faker.commerce.productDescription(),
-        id_type: 1, // or another valid type
+        id_type: 1,
         size: 'Medium',
         colour: 'Blue',
         quantity: 5,
         price: 99.99,
-        status: 'Available',
+        status: status.AVAILABLE,
       });
     furnitureId = furnitureRes.body.id;
   });
@@ -55,14 +53,14 @@ describe('FavoriteController (e2e)', () => {
     await app.close();
   });
 
-  it('POST /favorite → create', async () => {
+  it('POST /favorites → create', async () => {
     const favoriteDto = {
       id_furniture: furnitureId,
       id_user: userId,
       is_favorite: true,
     };
     const res = await request(app.getHttpServer())
-      .post('/favorite')
+      .post('/favorites')
       .send(favoriteDto);
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('id');
@@ -71,36 +69,35 @@ describe('FavoriteController (e2e)', () => {
     createdFavoriteId = res.body.id;
   });
 
-  it('GET /favorite → findAll', async () => {
-    const res = await request(app.getHttpServer()).get('/favorite');
+  it('GET /favorites → findAll', async () => {
+    const res = await request(app.getHttpServer()).get('/favorites');
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
-    // Optionnel: tu peux vérifier que l'élément créé est présent
     expect(
       res.body.find((f: { id: number }) => f.id === createdFavoriteId),
     ).toBeDefined();
   });
 
-  it('GET /favorite/:id → findOne', async () => {
+  it('GET /favorites/:id → findOne', async () => {
     const res = await request(app.getHttpServer()).get(
-      `/favorite/${createdFavoriteId}`,
+      `/favorites/${createdFavoriteId}`,
     );
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('id', createdFavoriteId);
     expect(res.body).toHaveProperty('id_user', userId);
   });
 
-  it('PATCH /favorite/:id → update', async () => {
+  it('PATCH /favorites/:id → update', async () => {
     const res = await request(app.getHttpServer())
-      .patch(`/favorite/${createdFavoriteId}`)
+      .patch(`/favorites/${createdFavoriteId}`)
       .send({ is_favorite: false });
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('is_favorite', false);
   });
 
-  it('DELETE /favorite/:id → soft delete', async () => {
+  it('DELETE /favorites/:id → soft delete', async () => {
     const res = await request(app.getHttpServer()).delete(
-      `/favorite/${createdFavoriteId}`,
+      `/favorites/${createdFavoriteId}`,
     );
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('deleted_at');

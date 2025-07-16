@@ -1,12 +1,22 @@
-// src\user\dto\create-user.dto.ts
+// src\user\dto\user-response.dto.ts
 
-import { IsString, IsEmail, IsEnum, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsEnum, IsOptional, IsInt } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { role } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
-export class CreateUserDto {
-  @ApiProperty({ example: faker.internet.username(), description: 'User name' })
+export class UserResponseDto {
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'ID',
+  })
+  @IsInt()
+  id: number;
+
+  @ApiProperty({
+    example: faker.internet.username(),
+    description: 'User name',
+  })
   @IsString()
   user_name: string;
 
@@ -18,15 +28,12 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({
-    example: faker.internet.password({ length: 12 }),
-    description: 'User password',
+    enum: role,
+    example: role.customer,
+    description: 'User role',
   })
-  @IsString()
-  password: string;
-
-  @ApiProperty({ enum: role, example: 'customer', description: 'User role' })
   @IsEnum(role)
-  role: role;
+  role: string;
 
   @ApiPropertyOptional({
     example: faker.date.recent().toISOString(),

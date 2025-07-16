@@ -52,6 +52,7 @@ describe('UserController (e2e, CRUD lifecycle)', () => {
       role: fakeUser.role,
     });
     expect(res.body).toHaveProperty('id');
+    expect(res.body).not.toHaveProperty('password');
     userId = res.body.id;
   });
 

@@ -89,7 +89,7 @@ describe('FavoriteService', () => {
 
     const result = await service.findOne(favoriteId);
     expect(prisma.favorite.findUnique).toHaveBeenCalledWith({
-      where: { id: favoriteId },
+      where: { id: favoriteId, deleted_at: null },
     });
     expect(result).toEqual(favorite);
   });

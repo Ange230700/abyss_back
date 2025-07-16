@@ -1,27 +1,27 @@
-// src\image\dto\create-image.dto.ts
+// src\material\dto\material-response.dto.ts
 
 import { faker } from '@faker-js/faker';
-import { IsString, IsInt, IsOptional } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsOptional, IsInt } from 'class-validator';
 
-export class CreateImageDto {
+export class MaterialResponseDto {
   @ApiProperty({
     example: faker.number.int({ min: 1, max: 100 }),
-    description: 'Furniture ID',
+    description: 'ID',
   })
   @IsInt()
-  id_furniture: number;
+  id: number;
 
   @ApiProperty({
-    example: faker.image.urlPicsumPhotos({ width: 400, height: 300 }),
-    description: 'Image URL',
+    example: faker.commerce.productMaterial(),
+    description: 'Material name',
   })
   @IsString()
-  url: string;
+  name: string;
 
   @ApiPropertyOptional({
     example: faker.date.recent().toISOString(),
-    description: 'Soft delete timestamp (optional)',
+    description: 'Optional deletion timestamp',
   })
   @IsOptional()
   deleted_at?: Date | null;

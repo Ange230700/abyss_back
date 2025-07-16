@@ -85,15 +85,6 @@ describe('MaterialController (e2e)', () => {
       `/materials/${createdId}`,
     );
 
-    // You might expect 200 with soft-deleted object or 404 depending on your service
-    // Just display for debug
-    // console.log(res.status, res.body);
-
-    // Example (adapt to your logic!):
-    // If you soft delete: expect(res.body.deleted_at).toBeDefined();
-    // If you hard delete: expect(res.status).toBe(404);
-
-    // For now, accept either (adapt as you wish):
     expect([200, 404]).toContain(res.status);
   });
 });

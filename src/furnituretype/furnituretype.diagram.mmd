@@ -4,19 +4,25 @@ classDiagram
     %% DTOs
     class CreateFurnituretypeDto {
         +name: string
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
     class UpdateFurnituretypeDto
     UpdateFurnituretypeDto --|> CreateFurnituretypeDto : extends (PartialType)
 
+    class FurnituretypeResponseDto {
+        +id: number
+        +name: string
+        +deleted_at?: Date | null
+    }
+
     %% Service
     class FurnituretypeService {
         +constructor(prisma: PrismaService)
-        +create(data: CreateFurnituretypeDto): Promise<Furnituretype>
-        +findAll(): Promise<Furnituretype[]>
-        +findOne(id: number): Promise<Furnituretype>
-        +update(id: number, data: UpdateFurnituretypeDto): Promise<Furnituretype>
-        +remove(id: number): Promise<Furnituretype>
+        +create(data: CreateFurnituretypeDto): Promise<furnituretype>
+        +findAll(): Promise<furnituretype[]>
+        +findOne(id: number): Promise<furnituretype | null>
+        +update(id: number, data: UpdateFurnituretypeDto): Promise<furnituretype>
+        +remove(id: number): Promise<furnituretype>
     }
 
     %% Controller
@@ -38,6 +44,7 @@ classDiagram
     FurnituretypeController --> FurnituretypeService : depends on
     FurnituretypeController ..> CreateFurnituretypeDto : uses
     FurnituretypeController ..> UpdateFurnituretypeDto : uses
+    FurnituretypeController ..> FurnituretypeResponseDto : returns
     FurnituretypeService ..> CreateFurnituretypeDto : uses
     FurnituretypeService ..> UpdateFurnituretypeDto : uses
     FurnituretypeModule o-- FurnituretypeController : provides

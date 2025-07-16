@@ -66,6 +66,7 @@ describe('FurniturematerialService', () => {
     const result = await service.findAll();
     expect(prisma.furniturematerial.findMany).toHaveBeenCalledWith({
       where: { deleted_at: null },
+      include: { furniture: true, material: true },
     });
     expect(result).toBe(data);
   });
@@ -80,7 +81,7 @@ describe('FurniturematerialService', () => {
     prisma.furniturematerial.findUnique.mockResolvedValue(found);
     const result = await service.findOne(id);
     expect(prisma.furniturematerial.findUnique).toHaveBeenCalledWith({
-      where: { id },
+      where: { id, deleted_at: null },
     });
     expect(result).toEqual(found);
   });

@@ -1,34 +1,34 @@
-// src\favorite\dto\create-favorite.dto.ts
+// src\furniturematerial\dto\furniturematerial-response.dto.ts
 
 import { faker } from '@faker-js/faker';
-import { IsInt, IsBoolean, IsOptional } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsInt, IsOptional } from 'class-validator';
 
-export class CreateFavoriteDto {
+export class FurnitureMaterialResponseDto {
   @ApiProperty({
     example: faker.number.int({ min: 1, max: 100 }),
-    description: 'Furniture ID',
+    description: 'ID',
+  })
+  @IsInt()
+  id: number;
+
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'ID of the furniture',
   })
   @IsInt()
   id_furniture: number;
 
   @ApiProperty({
     example: faker.number.int({ min: 1, max: 100 }),
-    description: 'User ID',
+    description: 'ID of the material',
   })
   @IsInt()
-  id_user: number;
-
-  @ApiProperty({
-    example: faker.datatype.boolean(),
-    description: 'Is favorite?',
-  })
-  @IsBoolean()
-  is_favorite: boolean;
+  id_material: number;
 
   @ApiPropertyOptional({
     example: faker.date.recent().toISOString(),
-    description: 'Soft delete timestamp (optional)',
+    description: 'Deletion timestamp',
     required: false,
     nullable: true,
   })

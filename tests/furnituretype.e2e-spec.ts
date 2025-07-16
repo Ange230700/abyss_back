@@ -82,9 +82,7 @@ describe('FurnituretypeController (e2e)', () => {
     const res = await request(app.getHttpServer()).get(
       `/furniture-types/${createdId}`,
     );
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('id', createdId);
-    expect(res.body.deleted_at).not.toBeNull();
+    expect(res.status).toBe(404);
   });
 
   it('GET /furniture-types (après soft delete) ne doit plus contenir ce type', async () => {

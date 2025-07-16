@@ -8,52 +8,83 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FavoriteService } from '~/src/favorite/favorite.service';
 import { CreateFavoriteDto } from '~/src/favorite/dto/create-favorite.dto';
 import { UpdateFavoriteDto } from '~/src/favorite/dto/update-favorite.dto';
+import { FavoriteResponseDto } from '~/src/favorite/dto/favorite-response.dto';
+import { plainToInstance } from 'class-transformer';
 
-@ApiTags('favorite')
-@Controller('favorite')
+@ApiTags('favorites')
+@Controller('favorites')
 export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create favorite' })
-  @ApiResponse({ status: 201, description: 'Favorite created' })
-  create(@Body() createFavoriteDto: CreateFavoriteDto) {
-    return this.favoriteService.create(createFavoriteDto);
+  @ApiResponse({
+    status: 201,
+    description: 'Favorite created',
+    type: FavoriteResponseDto,
+  })
+  async create(
+    @Body() createFavoriteDto: CreateFavoriteDto,
+  ): Promise<FavoriteResponseDto> {
+    const favorite = await this.favoriteService.create(createFavoriteDto);
+    return plainToInstance(FavoriteResponseDto, favorite);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all favorites' })
-  @ApiResponse({ status: 200, description: 'List of favorites' })
-  findAll() {
-    return this.favoriteService.findAll();
+  @ApiResponse({
+    status: 200,
+    description: 'List of favorites',
+    type: [FavoriteResponseDto],
+  })
+  async findAll(): Promise<FavoriteResponseDto[]> {
+    const data = await this.favoriteService.findAll();
+    return plainToInstance(FavoriteResponseDto, data);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get favorite by ID' })
-  @ApiResponse({ status: 200, description: 'Favorite found' })
-  findOne(@Param('id') id: string) {
-    return this.favoriteService.findOne(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'Favorite found',
+    type: FavoriteResponseDto,
+  })
+  async findOne(@Param('id') id: string): Promise<FavoriteResponseDto> {
+    const item = await this.favoriteService.findOne(+id);
+    if (!item) throw new NotFoundException('Furniture not found');
+    return plainToInstance(FavoriteResponseDto, item);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update favorite by ID' })
-  @ApiResponse({ status: 200, description: 'Favorite updated' })
-  update(
+  @ApiResponse({
+    status: 200,
+    description: 'Favorite updated',
+    type: FavoriteResponseDto,
+  })
+  async update(
     @Param('id') id: string,
     @Body() updateFavoriteDto: UpdateFavoriteDto,
-  ) {
-    return this.favoriteService.update(+id, updateFavoriteDto);
+  ): Promise<FavoriteResponseDto> {
+    const updated = await this.favoriteService.update(+id, updateFavoriteDto);
+    return plainToInstance(FavoriteResponseDto, updated);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete favorite by ID' })
-  @ApiResponse({ status: 200, description: 'Favorite soft deleted' })
-  remove(@Param('id') id: string) {
-    return this.favoriteService.remove(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'Favorite soft deleted',
+    type: FavoriteResponseDto,
+  })
+  async remove(@Param('id') id: string): Promise<FavoriteResponseDto> {
+    const deleted = await this.favoriteService.remove(+id);
+    return plainToInstance(FavoriteResponseDto, deleted);
   }
 }

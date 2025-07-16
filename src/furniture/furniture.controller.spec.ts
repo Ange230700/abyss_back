@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FurnitureController } from '~/src/furniture/furniture.controller';
 import { FurnitureService } from '~/src/furniture/furniture.service';
+import { status } from '@prisma/client';
 
 const serviceMock = {
   create: jest.fn(),
@@ -41,7 +42,7 @@ describe('FurnitureController', () => {
       colour: faker.color.human(),
       quantity: faker.number.int({ min: 1, max: 100 }),
       price: parseFloat(faker.commerce.price({ min: 10, max: 300, dec: 2 })),
-      status: 'Available',
+      status: status.AVAILABLE,
     };
     service.create.mockResolvedValue('created');
     const result = await controller.create(dto as any);

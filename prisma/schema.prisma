@@ -109,6 +109,8 @@ enum role {
 }
 
 enum status {
-  Available
-  Out_of_stock
+  AVAILABLE
+  OUT_OF_STOCK
+  LOW_STOCK
+  DISCONTINUED
 }

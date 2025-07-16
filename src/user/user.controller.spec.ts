@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '~/src/user/user.controller';
 import { UserService } from '~/src/user/user.service';
+import { role } from '@prisma/client';
 
 const serviceMock = {
   create: jest.fn(),
@@ -37,44 +38,95 @@ describe('UserController', () => {
       user_name: faker.person.firstName().toLowerCase(),
       email: faker.internet.email(),
       password: faker.internet.password(),
-      role: faker.helpers.arrayElement(['admin', 'customer', 'user']),
+      role: role.customer,
     };
-    service.create.mockResolvedValue('created');
+    const user = {
+      id: faker.number.int(),
+      user_name: dto.user_name,
+      email: dto.email,
+      role: dto.role,
+      deleted_at: null,
+    };
+    service.create.mockResolvedValue({ ...user, password: 'hashed' });
     const result = await controller.create(dto as any);
     expect(service.create).toHaveBeenCalledWith(dto);
-    expect(result).toBe('created');
+    expect(result).toEqual(user);
   });
 
   it('should call service.findAll on findAll()', async () => {
-    const fakeUsers = [faker.person.firstName(), faker.person.firstName()];
+    const fakeUsers = [
+      {
+        id: faker.number.int(),
+        user_name: faker.person.firstName().toLowerCase(),
+        email: faker.internet.email(),
+        role: role.customer,
+        deleted_at: null,
+        password: 'hidden',
+      },
+      {
+        id: faker.number.int(),
+        user_name: faker.person.firstName().toLowerCase(),
+        email: faker.internet.email(),
+        role: role.admin,
+        deleted_at: null,
+        password: 'hidden',
+      },
+    ];
     service.findAll.mockResolvedValue(fakeUsers);
     const result = await controller.findAll();
     expect(service.findAll).toHaveBeenCalled();
-    expect(result).toEqual(fakeUsers);
+    expect(result).toEqual(fakeUsers.map(({ password, ...rest }) => rest));
   });
 
   it('should call service.findOne on findOne()', async () => {
     const id = faker.number.int({ min: 1, max: 100 });
-    service.findOne.mockResolvedValue('found');
+    const user = {
+      id,
+      user_name: faker.person.firstName().toLowerCase(),
+      email: faker.internet.email(),
+      role: role.customer,
+      deleted_at: null,
+      password: 'hidden',
+    };
+    service.findOne.mockResolvedValue(user);
     const result = await controller.findOne(id.toString());
+    const { password, ...expected } = user;
     expect(service.findOne).toHaveBeenCalledWith(id);
-    expect(result).toBe('found');
+    expect(result).toEqual(expected);
   });
 
   it('should call service.update on update()', async () => {
     const id = faker.number.int({ min: 1, max: 100 });
     const dto = { password: faker.internet.password() };
-    service.update.mockResolvedValue('updated');
+    const user = {
+      id,
+      user_name: faker.person.firstName().toLowerCase(),
+      email: faker.internet.email(),
+      role: role.customer,
+      deleted_at: null,
+      password: 'hidden',
+    };
+    service.update.mockResolvedValue(user);
     const result = await controller.update(id.toString(), dto as any);
+    const { password, ...expected } = user;
     expect(service.update).toHaveBeenCalledWith(id, dto);
-    expect(result).toBe('updated');
+    expect(result).toEqual(expected);
   });
 
   it('should call service.remove on remove()', async () => {
     const id = faker.number.int({ min: 1, max: 100 });
-    service.remove.mockResolvedValue('deleted');
+    const user = {
+      id,
+      user_name: faker.person.firstName().toLowerCase(),
+      email: faker.internet.email(),
+      role: role.customer,
+      deleted_at: new Date(),
+      password: 'hidden',
+    };
+    service.remove.mockResolvedValue(user);
     const result = await controller.remove(id.toString());
+    const { password, ...expected } = user;
     expect(service.remove).toHaveBeenCalledWith(id);
-    expect(result).toBe('deleted');
+    expect(result).toEqual(expected);
   });
 });

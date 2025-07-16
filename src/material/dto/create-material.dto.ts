@@ -17,5 +17,5 @@ export class CreateMaterialDto {
     description: 'Optional deletion timestamp',
   })
   @IsOptional()
-  deleted_at?: Date;
+  deleted_at?: Date | null;
 }

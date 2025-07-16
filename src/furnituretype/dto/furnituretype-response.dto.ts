@@ -1,10 +1,17 @@
-// src\furnituretype\dto\create-furnituretype.dto.ts
+// src\furnituretype\dto\furnituretype-response.dto.ts
 
 import { faker } from '@faker-js/faker';
-import { IsString, IsOptional } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateFurnituretypeDto {
+export class FurnituretypeResponseDto {
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'ID',
+  })
+  @IsInt()
+  id: number;
+
   @ApiProperty({
     example:
       faker.commerce.productAdjective() + '-' + faker.string.alphanumeric(5),
@@ -18,5 +25,5 @@ export class CreateFurnituretypeDto {
     description: 'Optional deletion timestamp',
   })
   @IsOptional()
-  deleted_at?: Date | null;
+  deleted_at?: Date;
 }

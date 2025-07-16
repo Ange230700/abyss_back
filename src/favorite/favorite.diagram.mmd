@@ -6,29 +6,37 @@ classDiagram
         +id_furniture: number
         +id_user: number
         +is_favorite: boolean
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
     class UpdateFavoriteDto
     UpdateFavoriteDto --|> CreateFavoriteDto : extends (PartialType)
 
+    class FavoriteResponseDto {
+        +id: number
+        +id_furniture: number
+        +id_user: number
+        +is_favorite: boolean
+        +deleted_at?: Date | null
+    }
+
     %% Service
     class FavoriteService {
         +constructor(prisma: PrismaService)
-        +create(data: CreateFavoriteDto): Promise<Favorite>
-        +findAll(): Promise<Favorite[]>
-        +findOne(id: number): Promise<Favorite>
-        +update(id: number, data: UpdateFavoriteDto): Promise<Favorite>
-        +remove(id: number): Promise<Favorite>
+        +create(data: CreateFavoriteDto): Promise<favorite>
+        +findAll(): Promise<favorite[]>
+        +findOne(id: number): Promise<favorite | null>
+        +update(id: number, data: UpdateFavoriteDto): Promise<favorite>
+        +remove(id: number): Promise<favorite>
     }
 
     %% Controller
     class FavoriteController {
         +constructor(favoriteService: FavoriteService)
-        +create(createFavoriteDto: CreateFavoriteDto): Promise<Favorite>
-        +findAll(): Promise<Favorite[]>
-        +findOne(id: string): Promise<Favorite>
-        +update(id: string, updateFavoriteDto: UpdateFavoriteDto): Promise<Favorite>
-        +remove(id: string): Promise<Favorite>
+        +create(createFavoriteDto: CreateFavoriteDto): Promise<FavoriteResponseDto>
+        +findAll(): Promise<FavoriteResponseDto[]>
+        +findOne(id: string): Promise<FavoriteResponseDto>
+        +update(id: string, updateFavoriteDto: UpdateFavoriteDto): Promise<FavoriteResponseDto>
+        +remove(id: string): Promise<FavoriteResponseDto>
     }
 
     %% Module
@@ -40,6 +48,7 @@ classDiagram
     FavoriteController --> FavoriteService : depends on
     FavoriteController ..> CreateFavoriteDto : uses
     FavoriteController ..> UpdateFavoriteDto : uses
+    FavoriteController ..> FavoriteResponseDto : returns
     FavoriteService ..> CreateFavoriteDto : uses
     FavoriteService ..> UpdateFavoriteDto : uses
     FavoriteModule o-- FavoriteController : provides

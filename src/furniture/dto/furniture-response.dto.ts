@@ -1,11 +1,18 @@
-// src\furniture\dto\create-furniture.dto.ts
+// src/furniture/dto/furniture-response.dto.ts
 
 import { faker } from '@faker-js/faker';
-import { IsString, IsInt, IsNumber, IsEnum, IsOptional } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsNumber, IsEnum } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { status } from '@prisma/client';
 
-export class CreateFurnitureDto {
+export class FurnitureResponseDto {
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'ID',
+  })
+  @IsInt()
+  id: number;
+
   @ApiProperty({
     example: faker.commerce.productName(),
     description: 'Furniture name',
@@ -61,7 +68,7 @@ export class CreateFurnitureDto {
     description: 'Status',
   })
   @IsEnum(status)
-  status: status;
+  status: string;
 
   @ApiPropertyOptional({
     example: faker.date.recent().toISOString(),
