@@ -24,9 +24,14 @@ export class UserController {
 
   @Post()
   @ApiOperation({ summary: 'Create user' })
-  @ApiResponse({ status: 201, description: 'User created successfully' })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @ApiResponse({
+    status: 201,
+    description: 'User created successfully',
+    type: UserResponseDto,
+  })
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
+    const created = await this.userService.create(createUserDto);
+    return plainToInstance(UserResponseDto, created);
   }
 
   @Get()
@@ -56,15 +61,28 @@ export class UserController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update user by ID' })
-  @ApiResponse({ status: 200, description: 'The updated user' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @ApiResponse({
+    status: 200,
+    description: 'The updated user',
+    type: UserResponseDto,
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
+    const updated = await this.userService.update(+id, updateUserDto);
+    return plainToInstance(UserResponseDto, updated);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete user by ID' })
-  @ApiResponse({ status: 200, description: 'User deleted (soft delete)' })
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'User deleted (soft delete)',
+    type: UserResponseDto,
+  })
+  async remove(@Param('id') id: string): Promise<UserResponseDto> {
+    const deleted = await this.userService.remove(+id);
+    return plainToInstance(UserResponseDto, deleted);
   }
 }

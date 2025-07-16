@@ -1,7 +1,7 @@
 // src\user\dto\create-user.dto.ts
 
-import { IsString, IsEmail, IsEnum } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsEmail, IsEnum, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { role } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
@@ -27,4 +27,13 @@ export class CreateUserDto {
   @ApiProperty({ enum: role, example: 'customer', description: 'User role' })
   @IsEnum(role)
   role: role;
+
+  @ApiPropertyOptional({
+    example: faker.date.recent().toISOString(),
+    description: 'Soft delete timestamp (optional)',
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
+  deleted_at?: Date | null;
 }

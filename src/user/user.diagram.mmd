@@ -11,24 +11,32 @@ classDiagram
     class UpdateUserDto
     UpdateUserDto --|> CreateUserDto : extends (PartialType)
 
+    class UserResponseDto {
+        +id: number
+        +user_name: string
+        +email: string
+        +role: role
+        +deleted_at?: Date | null
+    }
+
     %% Service
     class UserService {
         +constructor(prisma: PrismaService)
-        +create(data: CreateUserDto): Promise<User>
-        +findAll(): Promise<User[]>
-        +findOne(id: number): Promise<User>
-        +update(id: number, data: UpdateUserDto): Promise<User>
-        +remove(id: number): Promise<User>
+        +create(data: CreateUserDto): Promise<user>
+        +findAll(): Promise<user[]>
+        +findOne(id: number): Promise<user | null>
+        +update(id: number, data: UpdateUserDto): Promise<user>
+        +remove(id: number): Promise<user>
     }
 
     %% Controller
     class UserController {
         +constructor(userService: UserService)
-        +create(createUserDto: CreateUserDto): Promise<User>
-        +findAll(): Promise<User[]>
-        +findOne(id: string): Promise<User>
-        +update(id: string, updateUserDto: UpdateUserDto): Promise<User>
-        +remove(id: string): Promise<User>
+        +create(createUserDto: CreateUserDto): Promise<UserResponseDto>
+        +findAll(): Promise<UserResponseDto[]>
+        +findOne(id: string): Promise<UserResponseDto>
+        +update(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto>
+        +remove(id: string): Promise<UserResponseDto>
     }
 
     %% Module
@@ -40,8 +48,8 @@ classDiagram
     UserController --> UserService : depends on
     UserController ..> CreateUserDto : uses
     UserController ..> UpdateUserDto : uses
+    UserController ..> UserResponseDto : returns
     UserService ..> CreateUserDto : uses
     UserService ..> UpdateUserDto : uses
     UserModule o-- UserController : provides
     UserModule o-- UserService : provides
-
