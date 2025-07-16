@@ -2,7 +2,7 @@
 
 import { faker } from '@faker-js/faker';
 import { IsInt, IsOptional, IsString, IsNumber, IsEnum } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { status } from '@prisma/client';
 
 export class FurnitureResponseDto {
@@ -70,12 +70,12 @@ export class FurnitureResponseDto {
   @IsEnum(status)
   status: string;
 
-  @ApiProperty({
-    example: [faker.image.urlPicsumPhotos({ width: 400, height: 300 })],
-    description: 'Image URLs',
+  @ApiPropertyOptional({
+    example: faker.date.recent().toISOString(),
+    description: 'Deletion timestamp',
     required: false,
     nullable: true,
   })
   @IsOptional()
-  imageUrls?: string[];
+  deleted_at?: Date | null;
 }

@@ -18,5 +18,5 @@ export class CreateFurnituretypeDto {
     description: 'Optional deletion timestamp',
   })
   @IsOptional()
-  deleted_at?: Date;
+  deleted_at?: Date | null;
 }

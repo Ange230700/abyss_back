@@ -70,5 +70,5 @@ export class CreateFurnitureDto {
     nullable: true,
   })
   @IsOptional()
-  deleted_at?: Date;
+  deleted_at?: Date | null;
 }
