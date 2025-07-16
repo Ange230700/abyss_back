@@ -4,29 +4,35 @@ classDiagram
     %% DTOs
     class CreateMaterialDto {
         +name: string
-        +deleted_at?: Date
+        +deleted_at?: Date | null
     }
     class UpdateMaterialDto
     UpdateMaterialDto --|> CreateMaterialDto : extends (PartialType)
 
+    class MaterialResponseDto {
+        +id: number
+        +name: string
+        +deleted_at?: Date | null
+    }
+
     %% Service
     class MaterialService {
         +constructor(prisma: PrismaService)
-        +create(data: CreateMaterialDto): Promise<Material>
-        +findAll(): Promise<Material[]>
-        +findOne(id: number): Promise<Material>
-        +update(id: number, data: UpdateMaterialDto): Promise<Material>
-        +remove(id: number): Promise<Material>
+        +create(data: CreateMaterialDto): Promise<material>
+        +findAll(): Promise<material[]>
+        +findOne(id: number): Promise<material>
+        +update(id: number, data: UpdateMaterialDto): Promise<material>
+        +remove(id: number): Promise<material>
     }
 
     %% Controller
     class MaterialController {
         +constructor(materialService: MaterialService)
-        +create(createMaterialDto: CreateMaterialDto): Promise<Material>
-        +findAll(): Promise<Material[]>
-        +findOne(id: string): Promise<Material>
-        +update(id: string, updateMaterialDto: UpdateMaterialDto): Promise<Material>
-        +remove(id: string): Promise<Material>
+        +create(createMaterialDto: CreateMaterialDto): Promise<MaterialResponseDto>
+        +findAll(): Promise<MaterialResponseDto[]>
+        +findOne(id: string): Promise<MaterialResponseDto>
+        +update(id: string, updateMaterialDto: UpdateMaterialDto): Promise<MaterialResponseDto>
+        +remove(id: string): Promise<MaterialResponseDto>
     }
 
     %% Module
@@ -38,8 +44,8 @@ classDiagram
     MaterialController --> MaterialService : depends on
     MaterialController ..> CreateMaterialDto : uses
     MaterialController ..> UpdateMaterialDto : uses
+    MaterialController ..> MaterialResponseDto : returns
     MaterialService ..> CreateMaterialDto : uses
     MaterialService ..> UpdateMaterialDto : uses
     MaterialModule o-- MaterialController : provides
     MaterialModule o-- MaterialService : provides
-

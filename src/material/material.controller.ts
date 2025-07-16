@@ -24,9 +24,16 @@ export class MaterialController {
 
   @Post()
   @ApiOperation({ summary: 'Create material' })
-  @ApiResponse({ status: 201, description: 'Material created' })
-  create(@Body() createMaterialDto: CreateMaterialDto) {
-    return this.materialService.create(createMaterialDto);
+  @ApiResponse({
+    status: 201,
+    description: 'Material created',
+    type: MaterialResponseDto,
+  })
+  async create(
+    @Body() createMaterialDto: CreateMaterialDto,
+  ): Promise<MaterialResponseDto> {
+    const created = await this.materialService.create(createMaterialDto);
+    return plainToInstance(MaterialResponseDto, created);
   }
 
   @Get()
@@ -36,14 +43,18 @@ export class MaterialController {
     description: 'List of materials',
     type: [MaterialResponseDto],
   })
-  async findAll() {
+  async findAll(): Promise<MaterialResponseDto[]> {
     const data = await this.materialService.findAll();
     return plainToInstance(MaterialResponseDto, data);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get material by ID' })
-  @ApiResponse({ status: 200, description: 'Material found' })
+  @ApiResponse({
+    status: 200,
+    description: 'Material found',
+    type: MaterialResponseDto,
+  })
   async findOne(@Param('id') id: string): Promise<MaterialResponseDto> {
     const material = await this.materialService.findOne(+id);
     if (!material) throw new NotFoundException('Material not found');
@@ -52,18 +63,28 @@ export class MaterialController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update material by ID' })
-  @ApiResponse({ status: 200, description: 'Material updated' })
-  update(
+  @ApiResponse({
+    status: 200,
+    description: 'Material updated',
+    type: MaterialResponseDto,
+  })
+  async update(
     @Param('id') id: string,
     @Body() updateMaterialDto: UpdateMaterialDto,
-  ) {
-    return this.materialService.update(+id, updateMaterialDto);
+  ): Promise<MaterialResponseDto> {
+    const updated = await this.materialService.update(+id, updateMaterialDto);
+    return plainToInstance(MaterialResponseDto, updated);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete material by ID' })
-  @ApiResponse({ status: 200, description: 'Material soft deleted' })
-  remove(@Param('id') id: string) {
-    return this.materialService.remove(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'Material soft deleted',
+    type: MaterialResponseDto,
+  })
+  async remove(@Param('id') id: string): Promise<MaterialResponseDto> {
+    const deleted = await this.materialService.remove(+id);
+    return plainToInstance(MaterialResponseDto, deleted);
   }
 }
