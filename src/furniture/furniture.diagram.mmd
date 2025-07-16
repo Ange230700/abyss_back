@@ -35,7 +35,7 @@ classDiagram
         +constructor(prisma: PrismaService)
         +create(data: CreateFurnitureDto): Promise<furniture>
         +findAll(): Promise<furniture[]>
-        +findOne(id: number): Promise<furniture>
+        +findOne(id: number): Promise<furniture | null>
         +update(id: number, data: UpdateFurnitureDto): Promise<furniture>
         +remove(id: number): Promise<furniture>
     }

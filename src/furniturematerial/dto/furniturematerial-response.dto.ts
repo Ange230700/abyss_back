@@ -1,21 +1,37 @@
 // src\furniturematerial\dto\furniturematerial-response.dto.ts
 
-import { ApiProperty } from '@nestjs/swagger';
+import { faker } from '@faker-js/faker';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsInt, IsOptional } from 'class-validator';
 
 export class FurnitureMaterialResponseDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'ID',
+  })
+  @IsInt()
   id: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'ID of the furniture',
+  })
+  @IsInt()
   id_furniture: number;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: faker.number.int({ min: 1, max: 100 }),
+    description: 'ID of the material',
+  })
+  @IsInt()
   id_material: number;
 
-  @ApiProperty({ required: false, nullable: true })
+  @ApiPropertyOptional({
+    example: faker.date.recent().toISOString(),
+    description: 'Deletion timestamp',
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
   deleted_at?: Date;
-
-  @ApiProperty({ required: false }) furnitureName?: string;
-
-  @ApiProperty({ required: false }) materialName?: string;
 }

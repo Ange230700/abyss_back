@@ -10,24 +10,31 @@ classDiagram
     class UpdateFurniturematerialDto
     UpdateFurniturematerialDto --|> CreateFurniturematerialDto : extends (PartialType)
 
+    class FurnitureMaterialResponseDto {
+        +id: number
+        +id_furniture: number
+        +id_material: number
+        +deleted_at?: Date
+    }
+
     %% Service
     class FurniturematerialService {
         +constructor(prisma: PrismaService)
-        +create(data: CreateFurniturematerialDto): Promise<FurnitureMaterial>
-        +findAll(): Promise<FurnitureMaterial[]>
-        +findOne(id: number): Promise<FurnitureMaterial>
-        +update(id: number, data: UpdateFurniturematerialDto): Promise<FurnitureMaterial>
-        +remove(id: number): Promise<FurnitureMaterial>
+        +create(data: CreateFurniturematerialDto): Promise<furnitureMaterial>
+        +findAll(): Promise<furnitureMaterial[]>
+        +findOne(id: number): Promise<furnitureMaterial | null>
+        +update(id: number, data: UpdateFurniturematerialDto): Promise<furnitureMaterial>
+        +remove(id: number): Promise<furnitureMaterial>
     }
 
     %% Controller
     class FurniturematerialController {
         +constructor(furniturematerialService: FurniturematerialService)
-        +create(createFurniturematerialDto: CreateFurniturematerialDto): Promise<FurnitureMaterial>
-        +findAll(): Promise<FurnitureMaterial[]>
-        +findOne(id: string): Promise<FurnitureMaterial>
-        +update(id: string, updateFurniturematerialDto: UpdateFurniturematerialDto): Promise<FurnitureMaterial>
-        +remove(id: string): Promise<FurnitureMaterial>
+        +create(createFurniturematerialDto: CreateFurniturematerialDto): Promise<FurnitureMaterialResponseDto>
+        +findAll(): Promise<FurnitureMaterialResponseDto[]>
+        +findOne(id: string): Promise<FurnitureMaterialResponseDto>
+        +update(id: string, updateFurniturematerialDto: UpdateFurniturematerialDto): Promise<FurnitureMaterialResponseDto>
+        +remove(id: string): Promise<FurnitureMaterialResponseDto>
     }
 
     %% Module
@@ -39,6 +46,7 @@ classDiagram
     FurniturematerialController --> FurniturematerialService : depends on
     FurniturematerialController ..> CreateFurniturematerialDto : uses
     FurniturematerialController ..> UpdateFurniturematerialDto : uses
+    FurniturematerialController ..> FurnitureMaterialResponseDto : returns
     FurniturematerialService ..> CreateFurniturematerialDto : uses
     FurniturematerialService ..> UpdateFurniturematerialDto : uses
     FurniturematerialModule o-- FurniturematerialController : provides

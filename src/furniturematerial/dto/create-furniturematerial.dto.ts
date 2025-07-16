@@ -22,6 +22,8 @@ export class CreateFurniturematerialDto {
   @ApiPropertyOptional({
     example: faker.date.recent().toISOString(),
     description: 'Optional deletion date',
+    required: false,
+    nullable: true,
   })
   @IsOptional()
   deleted_at?: Date;

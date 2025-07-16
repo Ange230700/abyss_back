@@ -31,8 +31,13 @@ export class FurniturematerialController {
     description: 'Furniture-material link created',
     type: FurnitureMaterialResponseDto,
   })
-  create(@Body() createFurniturematerialDto: CreateFurniturematerialDto) {
-    return this.furniturematerialService.create(createFurniturematerialDto);
+  async create(
+    @Body() createFurniturematerialDto: CreateFurniturematerialDto,
+  ): Promise<FurnitureMaterialResponseDto> {
+    const created = await this.furniturematerialService.create(
+      createFurniturematerialDto,
+    );
+    return plainToInstance(FurnitureMaterialResponseDto, created);
   }
 
   @Get()
@@ -64,21 +69,31 @@ export class FurniturematerialController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update furniture-material by ID' })
-  @ApiResponse({ status: 200, description: 'Furniture-material updated' })
-  update(
+  @ApiResponse({
+    status: 200,
+    description: 'Furniture-material updated',
+    type: FurnitureMaterialResponseDto,
+  })
+  async update(
     @Param('id') id: string,
     @Body() updateFurniturematerialDto: UpdateFurniturematerialDto,
-  ) {
-    return this.furniturematerialService.update(
+  ): Promise<FurnitureMaterialResponseDto> {
+    const updated = await this.furniturematerialService.update(
       +id,
       updateFurniturematerialDto,
     );
+    return plainToInstance(FurnitureMaterialResponseDto, updated);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete furniture-material by ID' })
-  @ApiResponse({ status: 200, description: 'Furniture-material soft deleted' })
-  remove(@Param('id') id: string) {
-    return this.furniturematerialService.remove(+id);
+  @ApiResponse({
+    status: 200,
+    description: 'Furniture-material soft deleted',
+    type: FurnitureMaterialResponseDto,
+  })
+  async remove(@Param('id') id: string): Promise<FurnitureMaterialResponseDto> {
+    const deleted = await this.furniturematerialService.remove(+id);
+    return plainToInstance(FurnitureMaterialResponseDto, deleted);
   }
 }
